@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/Users/karataev/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/22.2.1/support-annotations-22.2.1.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="61a0ff5c29295ec56d7e0bd3d25d95dbf71b4b2b">
+        <dex dex="/Users/karataev/Dropbox/AndroidDevelopment/Android-VideoTube-master/app/build/intermediates/pre-dexed/debug/support-annotations-22.2.1-926eb3b6c965d9cf4b5c930e07ccd76e8974c130.jar" />
+    </item>
+    <item
+        jar="/Users/karataev/Dropbox/AndroidDevelopment/Android-VideoTube-master/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.1/jars/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="f8efd0096475e0daf054267b61544e10dc776503">
+        <dex dex="/Users/karataev/Dropbox/AndroidDevelopment/Android-VideoTube-master/app/build/intermediates/pre-dexed/debug/classes-a8ea38fecfefef81617198c817c5c41f3957e938.jar" />
+    </item>
+    <item
+        jar="/Users/karataev/Dropbox/AndroidDevelopment/Android-VideoTube-master/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.1/jars/libs/internal_impl-22.2.1.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="c471eaaba13ff64f6e0383d1c30a9cdc9a97efeb">
+        <dex dex="/Users/karataev/Dropbox/AndroidDevelopment/Android-VideoTube-master/app/build/intermediates/pre-dexed/debug/internal_impl-22.2.1-9cae2107bcf6b63fd0020d0c3851e3da6369bea0.jar" />
+    </item>
+    <item
+        jar="/Users/karataev/Dropbox/AndroidDevelopment/Android-VideoTube-master/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.1/jars/classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="4486e953d1f35f8ccab098b1dd67146366d5f731">
+        <dex dex="/Users/karataev/Dropbox/AndroidDevelopment/Android-VideoTube-master/app/build/intermediates/pre-dexed/debug/classes-c9b7ae1ee77e7350e580b1720707656a0f76f47e.jar" />
+    </item>
+    <item
+        jar="/Users/karataev/Dropbox/AndroidDevelopment/Android-VideoTube-master/app/libs/YouTubeAndroidPlayerApi.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="78b8f6e37921559ed21c1fae1f30f9f713494db8">
+        <dex dex="/Users/karataev/Dropbox/AndroidDevelopment/Android-VideoTube-master/app/build/intermediates/pre-dexed/debug/YouTubeAndroidPlayerApi-523da6d5f15de0402f25e8d6cd50da7b71e0cab6.jar" />
+    </item>
+
+</items>
