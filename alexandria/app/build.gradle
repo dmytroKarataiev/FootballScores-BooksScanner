@@ -38,5 +38,7 @@ android {
 dependencies {
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.google.android.gms:play-services:8.3.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+
 
 }

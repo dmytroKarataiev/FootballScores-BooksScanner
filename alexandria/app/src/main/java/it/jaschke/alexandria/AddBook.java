@@ -27,6 +27,7 @@ import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 
@@ -35,7 +36,6 @@ import it.jaschke.alexandria.CameraPreview.FaceGraphic;
 import it.jaschke.alexandria.CameraPreview.GraphicOverlay;
 import it.jaschke.alexandria.data.AlexandriaContract;
 import it.jaschke.alexandria.services.BookService;
-import it.jaschke.alexandria.services.DownloadImage;
 
 
 public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -252,8 +252,9 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
         String imgUrl = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.IMAGE_URL));
         if(Patterns.WEB_URL.matcher(imgUrl).matches()){
-            new DownloadImage((ImageView) rootView.findViewById(R.id.bookCover)).execute(imgUrl);
-            rootView.findViewById(R.id.bookCover).setVisibility(View.VISIBLE);
+            ImageView imageView = (ImageView) rootView.findViewById(R.id.bookCover);
+            Picasso.with(getActivity()).load(imgUrl).into(imageView);
+            imageView.setVisibility(View.VISIBLE);
         }
 
         String categories = data.getString(data.getColumnIndex(AlexandriaContract.CategoryEntry.CATEGORY));
