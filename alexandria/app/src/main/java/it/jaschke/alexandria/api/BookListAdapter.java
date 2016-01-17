@@ -19,6 +19,7 @@ import it.jaschke.alexandria.services.DownloadImage;
  */
 public class BookListAdapter extends CursorAdapter {
 
+    private static int sLoaderID;
 
     public static class ViewHolder {
         public final ImageView bookCover;
@@ -32,8 +33,9 @@ public class BookListAdapter extends CursorAdapter {
         }
     }
 
-    public BookListAdapter(Context context, Cursor c, int flags) {
+    public BookListAdapter(Context context, Cursor c, int flags, int loaderId) {
         super(context, c, flags);
+        sLoaderID = loaderId;
     }
 
     @Override
@@ -42,6 +44,7 @@ public class BookListAdapter extends CursorAdapter {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         String imgUrl = cursor.getString(cursor.getColumnIndex(AlexandriaContract.BookEntry.IMAGE_URL));
+        // TODO: Add picasso
         new DownloadImage(viewHolder.bookCover).execute(imgUrl);
 
         String bookTitle = cursor.getString(cursor.getColumnIndex(AlexandriaContract.BookEntry.TITLE));

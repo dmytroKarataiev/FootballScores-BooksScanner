@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,16 +39,18 @@ public class ListOfBooks extends Fragment implements LoaderManager.LoaderCallbac
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        Cursor cursor = getActivity().getContentResolver().query(
-                AlexandriaContract.BookEntry.CONTENT_URI,
-                null, // leaving "columns" null just returns all the columns.
-                null, // cols for "where" clause
-                null, // values for "where" clause
-                null  // sort order
-        );
+        // We don't need to create cursor here, because we won't be able to close it.
+        // Instead we use LoaderManager which will take care of everything.
+//        Cursor cursor = getActivity().getContentResolver().query(
+//                AlexandriaContract.BookEntry.CONTENT_URI,
+//                null, // leaving "columns" null just returns all the columns.
+//                null, // cols for "where" clause
+//                null, // values for "where" clause
+//                null  // sort order
+//        );
 
+        bookListAdapter = new BookListAdapter(getActivity(), null, 0, LOADER_ID);
 
-        bookListAdapter = new BookListAdapter(getActivity(), cursor, 0);
         View rootView = inflater.inflate(R.layout.fragment_list_of_books, container, false);
         searchText = (EditText) rootView.findViewById(R.id.searchText);
         rootView.findViewById(R.id.searchButton).setOnClickListener(
@@ -77,6 +78,13 @@ public class ListOfBooks extends Fragment implements LoaderManager.LoaderCallbac
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState){
+
+        getLoaderManager().initLoader(LOADER_ID, null, this);
+        super.onActivityCreated(savedInstanceState);
     }
 
     private void restartLoader(){
