@@ -10,6 +10,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +20,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.vision.CameraSource;
+import com.google.android.gms.vision.MultiProcessor;
+import com.google.android.gms.vision.Tracker;
+import com.google.android.gms.vision.barcode.Barcode;
+import com.google.android.gms.vision.barcode.BarcodeDetector;
 
+import java.io.IOException;
+
+import it.jaschke.alexandria.CameraPreview.FaceGraphic;
+
+import it.jaschke.alexandria.CameraPreview.CameraSourcePreview;
+import it.jaschke.alexandria.CameraPreview.GraphicOverlay;
 import it.jaschke.alexandria.data.AlexandriaContract;
 import it.jaschke.alexandria.services.BookService;
 import it.jaschke.alexandria.services.DownloadImage;
@@ -37,7 +49,12 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     private String mScanFormat = "Format:";
     private String mScanContents = "Contents:";
 
+    private static final int RC_BARCODE_CAPTURE = 9001;
 
+
+    private CameraSource mCameraSource = null;
+    private CameraSourcePreview mPreview;
+    private GraphicOverlay mGraphicOverlay;
 
     public AddBook(){
     }
@@ -51,9 +68,18 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     }
 
     @Override
-    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.fragment_add_book, container, false);
+
+        mPreview = (CameraSourcePreview) rootView.findViewById(R.id.preview);
+        mGraphicOverlay = (GraphicOverlay) rootView.findViewById(R.id.overlay);
+
         ean = (EditText) rootView.findViewById(R.id.ean);
 
         ean.addTextChangedListener(new TextWatcher() {
@@ -100,8 +126,47 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                 CharSequence text = "This button should let you scan a book for its barcode!";
                 int duration = Toast.LENGTH_SHORT;
 
-                Toast toast = Toast.makeText(context, text, duration);
-                toast.show();
+
+
+
+                BarcodeDetector detector = new BarcodeDetector.Builder(context)
+                        //.setBarcodeFormats(Barcode.ISBN)
+                        .build();
+
+                detector.setProcessor(
+                        new MultiProcessor.Builder<>(new GraphicFaceTrackerFactory())
+                                .build());
+
+                //detector.setProcessor();
+
+                if (!detector.isOperational()) {
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                    return;
+                }
+
+                mCameraSource = new CameraSource.Builder(context, detector)
+                        .setAutoFocusEnabled(true)
+                        .setFacing(CameraSource.CAMERA_FACING_BACK)
+                        .setRequestedFps(15.0f)
+                        .setRequestedPreviewSize(1600, 900)
+                        .build();
+
+                try {
+                    startCameraSource();
+                    mCameraSource.start();
+                } catch (IOException e) {
+                    Log.e("LOG", "" + e);
+                }
+                //Frame frame = new Frame.Builder().setBitmap(myBitmap).build();
+                //SparseArray<Barcode> barcodes = detector.detect(mCameraSource);
+
+                //if (barcodes.size() > 0) {
+                //    Barcode thisCode = barcodes.valueAt(0);
+                //    ean.setText(thisCode.rawValue);
+                //}
+
+
 
             }
         });
@@ -203,5 +268,99 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         activity.setTitle(R.string.scan);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mCameraSource.release();
+    }
+
+    //==============================================================================================
+    // Graphic Face Tracker
+    //==============================================================================================
+
+    /**
+     * Factory for creating a face tracker to be associated with a new face.  The multiprocessor
+     * uses this factory to create face trackers as needed -- one for each individual.
+     */
+    private class GraphicFaceTrackerFactory implements MultiProcessor.Factory<Barcode> {
+        @Override
+        public Tracker<Barcode> create(Barcode face) {
+            return new GraphicFaceTracker(mGraphicOverlay);
+        }
+    }
+
+    /**
+     * Face tracker for each detected individual. This maintains a face graphic within the app's
+     * associated face overlay.
+     */
+    private class GraphicFaceTracker extends Tracker<Barcode> {
+        private GraphicOverlay mOverlay;
+        private FaceGraphic mFaceGraphic;
+
+        GraphicFaceTracker(GraphicOverlay overlay) {
+            mOverlay = overlay;
+            mFaceGraphic = new FaceGraphic(overlay);
+        }
+
+        /**
+         * Start tracking the detected face instance within the face overlay.
+         */
+        @Override
+        public void onNewItem(int faceId, Barcode item) {
+            mFaceGraphic.setId(faceId);
+            //ean.setText(item.rawValue);
+        }
+
+        /**
+         * Update the position/characteristics of the face within the overlay.
+         */
+        @Override
+        public void onUpdate(BarcodeDetector.Detections<Barcode> detectionResults, Barcode face) {
+            mOverlay.add(mFaceGraphic);
+            mFaceGraphic.updateFace(face);
+        }
+
+        /**
+         * Hide the graphic when the corresponding face was not detected.  This can happen for
+         * intermediate frames temporarily (e.g., if the face was momentarily blocked from
+         * view).
+         */
+        @Override
+        public void onMissing(BarcodeDetector.Detections<Barcode> detectionResults) {
+            mOverlay.remove(mFaceGraphic);
+        }
+
+        /**
+         * Called when the face is assumed to be gone for good. Remove the graphic annotation from
+         * the overlay.
+         */
+        @Override
+        public void onDone() {
+            mOverlay.remove(mFaceGraphic);
+        }
+    }
+
+    //starting the preview
+    private void startCameraSource() {
+        try {
+            mPreview.start(mCameraSource, mGraphicOverlay);
+        } catch (IOException e) {
+            mCameraSource.release();
+            mCameraSource = null;
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //startCameraSource();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mPreview.stop();
     }
 }
