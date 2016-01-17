@@ -6,7 +6,7 @@
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_gravity="left|center_vertical">
+        android:layout_gravity="start|center_vertical">
 
         <EditText
             android:layout_width="wrap_content"
@@ -18,10 +18,10 @@
             android:textIsSelectable="false"
             android:maxLength="@integer/ean_size"
             android:hint="@string/input_hint"
-            android:layout_marginLeft="40dp"
-            android:layout_marginStart="40dp"
+            android:layout_marginLeft="@dimen/land_margin_left"
+            android:layout_marginStart="@dimen/land_margin_left"
             android:maxLines="1"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="@dimen/land_margin_top"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"/>
@@ -31,8 +31,8 @@
             android:layout_height="wrap_content"
             android:text="@string/scan_button"
             android:id="@+id/scan_button"
-            android:layout_marginLeft="23dp"
-            android:layout_marginStart="23dp"
+            android:layout_marginLeft="@dimen/land_button_margin"
+            android:layout_marginStart="@dimen/land_button_margin"
             android:layout_alignBottom="@+id/ean"
             android:layout_toRightOf="@+id/ean"
             android:layout_toEndOf="@+id/ean"/>
@@ -46,7 +46,7 @@
             android:layout_alignStart="@+id/ean"
             android:layout_alignEnd="@id/scan_button"
             android:layout_alignRight="@id/scan_button"
-            android:padding="16dp"
+            android:padding="@dimen/standard_padding"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:keepScreenOn="true">
@@ -75,9 +75,9 @@
             android:layout_below="@+id/scan_button"
             android:layout_alignLeft="@+id/ean"
             android:layout_alignStart="@+id/ean"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginLeft="@dimen/margin_right"
+            android:layout_marginRight="@dimen/margin_right"
+            android:layout_marginTop="@dimen/margin_right"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -86,15 +86,15 @@
             android:layout_below="@+id/bookTitle"
             android:layout_alignLeft="@+id/bookTitle"
             android:layout_alignStart="@+id/bookTitle"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="@dimen/margin_right"/>
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/bookCover"
             android:contentDescription="@string/book_cover"
-            android:minHeight="20dip"
-            android:minWidth="20dip"
+            android:minHeight="@dimen/margin_add_book"
+            android:minWidth="@dimen/margin_add_book"
             android:layout_below="@+id/bookSubTitle"
             android:layout_alignLeft="@+id/bookSubTitle"
             android:layout_alignStart="@+id/bookSubTitle"
@@ -105,9 +105,11 @@
             android:layout_height="wrap_content"
             android:id="@+id/authors"
             android:textSize="@dimen/small_fontsize"
-            android:layout_marginLeft="25dp"
+            android:layout_marginLeft="@dimen/margin_top_bigger"
+            android:layout_marginStart="@dimen/margin_top_bigger"
             android:layout_alignTop="@+id/bookCover"
             android:layout_toRightOf="@+id/bookCover"
+            android:layout_toEndOf="@+id/bookCover"
             />
 
         <TextView
@@ -118,7 +120,7 @@
             android:layout_below="@+id/bookCover"
             android:layout_alignLeft="@+id/bookCover"
             android:layout_alignStart="@+id/bookCover"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="@dimen/margin_right"/>
 
         <LinearLayout
             android:orientation="vertical"
@@ -126,6 +128,7 @@
             android:layout_height="fill_parent"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             >
 
             <ImageButton

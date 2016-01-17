@@ -4,8 +4,29 @@
     <integer name="ean_width">8</integer>
     <dimen name="head_line">24sp</dimen>
     <dimen name="small_fontsize">12sp</dimen>
+    <dimen name="fontsize">16sp</dimen>
+    <dimen name="fontsize_bigger">18sp</dimen>
 
     <!-- Per the design guidelines, navigation drawers should be between 240dp and 320dp:
          https://developer.android.com/design/patterns/navigation-drawer.html -->
     <dimen name="navigation_drawer_width">240dp</dimen>
+
+    <dimen name="standard_padding">16dp</dimen>
+    <dimen name="margin_top">15dp</dimen>
+    <dimen name="padding_add_book">20dp</dimen>
+    <dimen name="margin_right">10dp</dimen>
+    <dimen name="margin_add_book">20dp</dimen>
+    <dimen name="margin_add_book_small">10dp</dimen>
+    <dimen name="margin_top_bigger">25dp</dimen>
+    <dimen name="margin_image_right">6dp</dimen>
+    <dimen name="margin_bottom">5dp</dimen>
+    <dimen name="textView_height">26dp</dimen>
+    <dimen name="margin_zero">0dp</dimen>
+
+    <dimen name="buttons_height">50dp</dimen>
+
+    <!-- Layout Landscape -->
+    <dimen name="land_margin_left">40dp</dimen>
+    <dimen name="land_margin_top">30dp</dimen>
+    <dimen name="land_button_margin">23dp</dimen>
 </resources>

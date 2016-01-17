@@ -44,20 +44,12 @@ import it.jaschke.alexandria.services.BookService;
 public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private final String LOG_TAG = AddBook.class.getSimpleName();
 
-    private static final String TAG = "INTENT_TO_SCAN_ACTIVITY";
     private EditText ean;
     private final int LOADER_ID = 1;
     private View rootView;
     private final String EAN_CONTENT = "eanContent";
-    private static final String SCAN_FORMAT = "scanFormat";
-    private static final String SCAN_CONTENTS = "scanContents";
 
-    private String mScanFormat = "Format:";
-    private String mScanContents = "Contents:";
-
-    private static final int RC_BARCODE_CAPTURE = 9001;
     private static final int RC_HANDLE_GMS = 9001;
-
 
     private CameraSource mCameraSource = null;
     private CameraSourcePreview mPreview;
@@ -92,6 +84,10 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
         mPreview = (CameraSourcePreview) rootView.findViewById(R.id.preview);
         mGraphicOverlay = (GraphicOverlay) rootView.findViewById(R.id.overlay);
+        //mPreview.setVisibility(View.GONE);
+        //mGraphicOverlay.setVisibility(View.GONE);
+        mPreview.setVisibility(View.INVISIBLE);
+        mGraphicOverlay.setVisibility(View.INVISIBLE);
 
         ean = (EditText) rootView.findViewById(R.id.ean);
 
@@ -147,8 +143,6 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                 // Hint: Use a Try/Catch block to handle the Intent dispatch gracefully, if you
                 // are using an external app.
                 //when you're done, remove the toast below.
-                mPreview.setVisibility(View.VISIBLE);
-                mGraphicOverlay.setVisibility(View.VISIBLE);
 
                 Context context = getActivity();
                 CharSequence text = "This button should let you scan a book for its barcode!";
@@ -239,15 +233,16 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         if (!data.moveToFirst()) {
             return;
         }
-        // TODO: Check empty strings
+
         String bookTitle = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.TITLE));
         ((TextView) rootView.findViewById(R.id.bookTitle)).setText(bookTitle);
 
         String bookSubTitle = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.SUBTITLE));
-        ((TextView) rootView.findViewById(R.id.bookSubTitle)).setText(bookSubTitle);
+        if (bookSubTitle != null) {
+            ((TextView) rootView.findViewById(R.id.bookSubTitle)).setText(bookSubTitle);
+        }
 
         String authors = data.getString(data.getColumnIndex(AlexandriaContract.AuthorEntry.AUTHOR));
-
         if (authors != null) {
             String[] authorsArr = authors.split(",");
             ((TextView) rootView.findViewById(R.id.authors)).setLines(authorsArr.length);
@@ -262,7 +257,9 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         }
 
         String categories = data.getString(data.getColumnIndex(AlexandriaContract.CategoryEntry.CATEGORY));
-        ((TextView) rootView.findViewById(R.id.categories)).setText(categories);
+        if (categories != null) {
+            ((TextView) rootView.findViewById(R.id.categories)).setText(categories);
+        }
 
         rootView.findViewById(R.id.save_button).setVisibility(View.VISIBLE);
         rootView.findViewById(R.id.delete_button).setVisibility(View.VISIBLE);
@@ -379,6 +376,8 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     private void startCameraSource() {
 
         try {
+            mPreview.setVisibility(View.VISIBLE);
+            mGraphicOverlay.setVisibility(View.VISIBLE);
             mPreview.start(mCameraSource, mGraphicOverlay);
         } catch (IOException e) {
             mCameraSource.release();

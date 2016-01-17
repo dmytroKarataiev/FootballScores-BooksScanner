@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Александрія</string>
+
+    <!-- Menu Items -->
+    <string name="scan">Відсканувати/додати книжку</string>
+
+    <string name="navigation_drawer_open" >Відкрити панель</string>
+    <string name="navigation_drawer_close">Закрити панель</string>
+    <string name="action_settings">Налаштування</string>
+    <string name="scan_button">Відсканувати</string>
+    <string name="input_hint">Введіть ISBN-13. Тільки цифри.</string>
+    <string name="book_cover">Обертка</string>
+
+    <string name="ok_button">Наступна</string>
+    <string name="cancel_button">Відмінити</string>
+    <string name="not_found">Книжка не знайдена</string>
+    <string name="search">Пошук</string>
+    <string name="delete">Видалити</string>
+    <string name="pref_startScreen">Вибрати головне вікно</string>
+    <string name="title_activity_settings">Налаштування</string>
+    <string name="action_share">Поділитись</string>
+    <string name="share_text">Обов\'язково прочитай:</string>
+
+    <string name="about_text">Программа бере дані через Google API. Всі назви, обкладинки, зображення та інформація про автора заватажуються звідти.
+    Оригінальна версія програма була написана Сашкою Яшке, та модифікована версія була видана студентам курсу Android Nanodegree від Udacity.
+    Сканування штрих-кодів та виправлення помилок і переклад були зроблені Дмитром Каратаєвим. </string>
+    <string name="about">О програмі</string>
+    <string name="back_button">назад</string>
+    <string name="books">Лист книжок</string>
+</resources>
