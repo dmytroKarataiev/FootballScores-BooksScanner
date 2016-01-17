@@ -75,6 +75,9 @@ public class FaceGraphic extends GraphicOverlay.Graphic {
         mFaceId = id;
     }
 
+    public Barcode getBarcode() {
+        return mFace;
+    }
 
     /**
      * Updates the face instance from the detection of the most recent frame.  Invalidates the

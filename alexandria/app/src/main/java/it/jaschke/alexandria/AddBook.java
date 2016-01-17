@@ -28,9 +28,8 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.IOException;
 
-import it.jaschke.alexandria.CameraPreview.FaceGraphic;
-
 import it.jaschke.alexandria.CameraPreview.CameraSourcePreview;
+import it.jaschke.alexandria.CameraPreview.FaceGraphic;
 import it.jaschke.alexandria.CameraPreview.GraphicOverlay;
 import it.jaschke.alexandria.data.AlexandriaContract;
 import it.jaschke.alexandria.services.BookService;
@@ -38,6 +37,8 @@ import it.jaschke.alexandria.services.DownloadImage;
 
 
 public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    private final String LOG_TAG = AddBook.class.getSimpleName();
+
     private static final String TAG = "INTENT_TO_SCAN_ACTIVITY";
     private EditText ean;
     private final int LOADER_ID = 1;
@@ -68,11 +69,6 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.fragment_add_book, container, false);
@@ -91,10 +87,15 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 //no need
+
             }
 
             @Override
             public void afterTextChanged(Editable s) {
+
+                // hide Preview and release a camera on text change
+                Log.v(LOG_TAG, "afterTextChanged");
+
                 String ean =s.toString();
                 //catch isbn10 numbers
                 if(ean.length()==10 && !ean.startsWith("978")){
@@ -122,52 +123,41 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                 // Hint: Use a Try/Catch block to handle the Intent dispatch gracefully, if you
                 // are using an external app.
                 //when you're done, remove the toast below.
+                mPreview.setVisibility(View.VISIBLE);
+                mGraphicOverlay.setVisibility(View.VISIBLE);
+
                 Context context = getActivity();
                 CharSequence text = "This button should let you scan a book for its barcode!";
                 int duration = Toast.LENGTH_SHORT;
 
+                if (mCameraSource == null) {
+                    BarcodeDetector detector = new BarcodeDetector.Builder(context)
+                            .setBarcodeFormats(Barcode.ISBN | Barcode.EAN_13)
+                            .build();
 
+                    if (!detector.isOperational()) {
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                        return;
+                    }
 
+                    detector.setProcessor(
+                            new MultiProcessor.Builder<>(new GraphicFaceTrackerFactory())
+                                    .build());
 
-                BarcodeDetector detector = new BarcodeDetector.Builder(context)
-                        //.setBarcodeFormats(Barcode.ISBN)
-                        .build();
-
-                detector.setProcessor(
-                        new MultiProcessor.Builder<>(new GraphicFaceTrackerFactory())
-                                .build());
-
-                //detector.setProcessor();
-
-                if (!detector.isOperational()) {
-                    Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();
-                    return;
+                    mCameraSource = new CameraSource.Builder(context, detector)
+                            .setAutoFocusEnabled(true)
+                            .setFacing(CameraSource.CAMERA_FACING_BACK)
+                            .setRequestedFps(15.0f)
+                            .setRequestedPreviewSize(1600, 900)
+                            .build();
+                    try {
+                        startCameraSource();
+                        mCameraSource.start();
+                    } catch (IOException e) {
+                        Log.e("LOG", "" + e);
+                    }
                 }
-
-                mCameraSource = new CameraSource.Builder(context, detector)
-                        .setAutoFocusEnabled(true)
-                        .setFacing(CameraSource.CAMERA_FACING_BACK)
-                        .setRequestedFps(15.0f)
-                        .setRequestedPreviewSize(1600, 900)
-                        .build();
-
-                try {
-                    startCameraSource();
-                    mCameraSource.start();
-                } catch (IOException e) {
-                    Log.e("LOG", "" + e);
-                }
-                //Frame frame = new Frame.Builder().setBitmap(myBitmap).build();
-                //SparseArray<Barcode> barcodes = detector.detect(mCameraSource);
-
-                //if (barcodes.size() > 0) {
-                //    Barcode thisCode = barcodes.valueAt(0);
-                //    ean.setText(thisCode.rawValue);
-                //}
-
-
-
             }
         });
 
@@ -273,7 +263,9 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mCameraSource.release();
+        if (mCameraSource != null) {
+            mCameraSource.release();
+        }
     }
 
     //==============================================================================================
@@ -310,7 +302,17 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         @Override
         public void onNewItem(int faceId, Barcode item) {
             mFaceGraphic.setId(faceId);
-            //ean.setText(item.rawValue);
+            final Barcode barcode = item;
+            Log.v(LOG_TAG, "barcode value " + item.rawValue + ", format: " + item.format);
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ean.setText(barcode.rawValue);
+                    mPreview.setVisibility(View.GONE);
+                    mGraphicOverlay.setVisibility(View.GONE);
+                }
+            });
+
         }
 
         /**
@@ -340,6 +342,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         public void onDone() {
             mOverlay.remove(mFaceGraphic);
         }
+
     }
 
     //starting the preview
@@ -353,14 +356,10 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        //startCameraSource();
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         mPreview.stop();
     }
+
+
 }

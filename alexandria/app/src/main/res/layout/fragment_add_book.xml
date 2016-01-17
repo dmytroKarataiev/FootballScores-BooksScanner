@@ -51,6 +51,7 @@
             android:keepScreenOn="true">
 
         </LinearLayout>
+
         <LinearLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/topLayout"
@@ -58,6 +59,9 @@
             android:layout_below="@id/testBarcode"
             android:layout_alignLeft="@+id/eancontainer"
             android:layout_alignStart="@+id/eancontainer"
+            android:layout_alignEnd="@id/eancontainer"
+            android:layout_alignRight="@id/eancontainer"
+            android:padding="16dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:keepScreenOn="true">
@@ -65,7 +69,7 @@
             <it.jaschke.alexandria.CameraPreview.CameraSourcePreview
                 android:id="@+id/preview"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent" >
 
                 <it.jaschke.alexandria.CameraPreview.GraphicOverlay
                     android:id="@+id/overlay"
@@ -85,7 +89,7 @@
             android:textStyle="bold"
             android:layout_marginTop="25dp"
             android:paddingRight="20dp"
-            android:layout_below="@+id/topLayout"
+            android:layout_below="@+id/testBarcode"
             android:layout_alignLeft="@+id/eancontainer"
             android:layout_alignStart="@+id/eancontainer"/>
 
