@@ -32,7 +32,7 @@ import com.squareup.picasso.Picasso;
 import java.io.IOException;
 
 import it.jaschke.alexandria.CameraPreview.CameraSourcePreview;
-import it.jaschke.alexandria.CameraPreview.FaceGraphic;
+import it.jaschke.alexandria.CameraPreview.BarcodeGraphic;
 import it.jaschke.alexandria.CameraPreview.GraphicOverlay;
 import it.jaschke.alexandria.data.AlexandriaContract;
 import it.jaschke.alexandria.services.BookService;
@@ -162,7 +162,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                     }
 
                     detector.setProcessor(
-                            new MultiProcessor.Builder<>(new GraphicFaceTrackerFactory())
+                            new MultiProcessor.Builder<>(new GraphicBarcodeTrackerFactory())
                                     .build());
 
                     mCameraSource = new CameraSource.Builder(context, detector)
@@ -294,17 +294,17 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     }
 
     //==============================================================================================
-    // Graphic Face Tracker
+    // Graphic Barcode Tracker
     //==============================================================================================
 
     /**
-     * Factory for creating a face tracker to be associated with a new face.  The multiprocessor
-     * uses this factory to create face trackers as needed -- one for each individual.
+     * Factory for creating a barcode tracker to be associated with a new barcode.  The multiprocessor
+     * uses this factory to create barcode trackers as needed -- one for each code.
      */
-    private class GraphicFaceTrackerFactory implements MultiProcessor.Factory<Barcode> {
+    private class GraphicBarcodeTrackerFactory implements MultiProcessor.Factory<Barcode> {
         @Override
-        public Tracker<Barcode> create(Barcode face) {
-            return new GraphicFaceTracker(mGraphicOverlay);
+        public Tracker<Barcode> create(Barcode barcode) {
+            return new GraphicBarcodeTracker(mGraphicOverlay);
         }
     }
 
@@ -312,23 +312,24 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
      * Face tracker for each detected individual. This maintains a face graphic within the app's
      * associated face overlay.
      */
-    private class GraphicFaceTracker extends Tracker<Barcode> {
+    private class GraphicBarcodeTracker extends Tracker<Barcode> {
         private GraphicOverlay mOverlay;
-        private FaceGraphic mFaceGraphic;
+        private BarcodeGraphic mBarcodeGraphic;
 
-        GraphicFaceTracker(GraphicOverlay overlay) {
+        GraphicBarcodeTracker(GraphicOverlay overlay) {
             mOverlay = overlay;
-            mFaceGraphic = new FaceGraphic(overlay);
+            mBarcodeGraphic = new BarcodeGraphic(overlay);
         }
 
         /**
-         * Start tracking the detected face instance within the face overlay.
+         * Start tracking the detected barcode instance within the barcode overlay.
          */
         @Override
-        public void onNewItem(int faceId, Barcode item) {
-            mFaceGraphic.setId(faceId);
+        public void onNewItem(int barcodeId, Barcode item) {
+            mBarcodeGraphic.setId(barcodeId);
             final Barcode barcode = item;
-            Log.v(LOG_TAG, "barcode value " + item.rawValue + ", format: " + item.format);
+
+            // Send a message to the main thread with a code
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -341,31 +342,31 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         }
 
         /**
-         * Update the position/characteristics of the face within the overlay.
+         * Update the position/characteristics of the barcode within the overlay.
          */
         @Override
-        public void onUpdate(BarcodeDetector.Detections<Barcode> detectionResults, Barcode face) {
-            mOverlay.add(mFaceGraphic);
-            mFaceGraphic.updateFace(face);
+        public void onUpdate(BarcodeDetector.Detections<Barcode> detectionResults, Barcode barcode) {
+            mOverlay.add(mBarcodeGraphic);
+            mBarcodeGraphic.updateBarcode(barcode);
         }
 
         /**
-         * Hide the graphic when the corresponding face was not detected.  This can happen for
-         * intermediate frames temporarily (e.g., if the face was momentarily blocked from
+         * Hide the graphic when the corresponding barcode was not detected.  This can happen for
+         * intermediate frames temporarily (e.g., if the barcode was momentarily blocked from
          * view).
          */
         @Override
         public void onMissing(BarcodeDetector.Detections<Barcode> detectionResults) {
-            mOverlay.remove(mFaceGraphic);
+            mOverlay.remove(mBarcodeGraphic);
         }
 
         /**
-         * Called when the face is assumed to be gone for good. Remove the graphic annotation from
+         * Called when the barcode is assumed to be gone for good. Remove the graphic annotation from
          * the overlay.
          */
         @Override
         public void onDone() {
-            mOverlay.remove(mFaceGraphic);
+            mOverlay.remove(mBarcodeGraphic);
         }
 
     }
