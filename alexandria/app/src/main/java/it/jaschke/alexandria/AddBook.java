@@ -1,6 +1,7 @@
 package it.jaschke.alexandria;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -22,6 +23,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.Tracker;
@@ -31,8 +34,8 @@ import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 
-import it.jaschke.alexandria.CameraPreview.CameraSourcePreview;
 import it.jaschke.alexandria.CameraPreview.BarcodeGraphic;
+import it.jaschke.alexandria.CameraPreview.CameraSourcePreview;
 import it.jaschke.alexandria.CameraPreview.GraphicOverlay;
 import it.jaschke.alexandria.data.AlexandriaContract;
 import it.jaschke.alexandria.services.BookService;
@@ -45,7 +48,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     private EditText ean;
     private final int LOADER_ID = 1;
     private View rootView;
-    private final String EAN_CONTENT="eanContent";
+    private final String EAN_CONTENT = "eanContent";
     private static final String SCAN_FORMAT = "scanFormat";
     private static final String SCAN_CONTENTS = "scanContents";
 
@@ -53,16 +56,17 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     private String mScanContents = "Contents:";
 
     private static final int RC_BARCODE_CAPTURE = 9001;
+    private static final int RC_HANDLE_GMS = 9001;
 
 
     private CameraSource mCameraSource = null;
     private CameraSourcePreview mPreview;
     private GraphicOverlay mGraphicOverlay;
 
-    public AddBook(){
+    public AddBook() {
     }
 
-    // Network status variables and methods (to stop fetching the data if the phone is offline
+    // Network status to stop fetching the data if the phone is offline
     private boolean isOnline(Context context) {
         if (context != null) {
             ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -76,7 +80,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if(ean!=null) {
+        if (ean != null) {
             outState.putString(EAN_CONTENT, ean.getText().toString());
         }
     }
@@ -109,12 +113,12 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                 // hide Preview and release a camera on text change
                 Log.v(LOG_TAG, "afterTextChanged");
 
-                String ean =s.toString();
+                String ean = s.toString();
                 //catch isbn10 numbers
-                if(ean.length()==10 && !ean.startsWith("978")){
-                    ean="978"+ean;
+                if (ean.length() == 10 && !ean.startsWith("978")) {
+                    ean = "978" + ean;
                 }
-                if(ean.length()<13){
+                if (ean.length() < 13) {
                     clearFields();
                     return;
                 }
@@ -150,7 +154,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                 CharSequence text = "This button should let you scan a book for its barcode!";
                 int duration = Toast.LENGTH_SHORT;
 
-                if (mCameraSource == null) {
+                if (mCameraSource == null && isGooglePlayServicesAvailable()) {
                     BarcodeDetector detector = new BarcodeDetector.Builder(context)
                             .setBarcodeFormats(Barcode.ISBN | Barcode.EAN_13)
                             .build();
@@ -199,7 +203,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             }
         });
 
-        if(savedInstanceState!=null){
+        if (savedInstanceState != null) {
             ean.setText(savedInstanceState.getString(EAN_CONTENT));
             ean.setHint("");
         }
@@ -207,18 +211,18 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         return rootView;
     }
 
-    private void restartLoader(){
+    private void restartLoader() {
         getLoaderManager().restartLoader(LOADER_ID, null, this);
     }
 
     @Override
     public android.support.v4.content.Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if(ean.getText().length()==0){
+        if (ean.getText().length() == 0) {
             return null;
         }
-        String eanStr= ean.getText().toString();
-        if(eanStr.length()==10 && !eanStr.startsWith("978")){
-            eanStr="978"+eanStr;
+        String eanStr = ean.getText().toString();
+        if (eanStr.length() == 10 && !eanStr.startsWith("978")) {
+            eanStr = "978" + eanStr;
         }
         return new CursorLoader(
                 getActivity(),
@@ -247,11 +251,11 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         if (authors != null) {
             String[] authorsArr = authors.split(",");
             ((TextView) rootView.findViewById(R.id.authors)).setLines(authorsArr.length);
-            ((TextView) rootView.findViewById(R.id.authors)).setText(authors.replace(",","\n"));
+            ((TextView) rootView.findViewById(R.id.authors)).setText(authors.replace(",", "\n"));
         }
 
         String imgUrl = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.IMAGE_URL));
-        if(Patterns.WEB_URL.matcher(imgUrl).matches()){
+        if (Patterns.WEB_URL.matcher(imgUrl).matches()) {
             ImageView imageView = (ImageView) rootView.findViewById(R.id.bookCover);
             Picasso.with(getActivity()).load(imgUrl).into(imageView);
             imageView.setVisibility(View.VISIBLE);
@@ -269,7 +273,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
     }
 
-    private void clearFields(){
+    private void clearFields() {
         ((TextView) rootView.findViewById(R.id.bookTitle)).setText("");
         ((TextView) rootView.findViewById(R.id.bookSubTitle)).setText("");
         ((TextView) rootView.findViewById(R.id.authors)).setText("");
@@ -373,6 +377,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
     //starting the preview
     private void startCameraSource() {
+
         try {
             mPreview.start(mCameraSource, mGraphicOverlay);
         } catch (IOException e) {
@@ -385,6 +390,20 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     public void onPause() {
         super.onPause();
         mPreview.stop();
+    }
+
+    private boolean isGooglePlayServicesAvailable() {
+        // check that the device has play services available.
+        int code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(
+                getActivity().getApplicationContext());
+        if (code != ConnectionResult.SUCCESS) {
+            Dialog dlg =
+                    GoogleApiAvailability.getInstance().getErrorDialog(getActivity(), code, RC_HANDLE_GMS);
+            dlg.show();
+            return false;
+        } else {
+            return true;
+        }
     }
 
 
