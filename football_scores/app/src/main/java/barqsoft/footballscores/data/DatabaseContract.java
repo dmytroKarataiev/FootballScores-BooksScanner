@@ -30,6 +30,10 @@ public class DatabaseContract {
         public static Uri buildCrestUri(int id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
+
+        public static Uri buildScoreWithId() {
+            return BASE_CONTENT_URI.buildUpon().appendPath("crest").build();
+        }
     }
 
     public static final class scores_table implements BaseColumns {

@@ -4,7 +4,6 @@ import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
@@ -56,20 +55,20 @@ public class myFetchService extends IntentService {
                 getCrestUrl(league);
                 Log.v(LOG_TAG, "League: " + league + " ADDED");
             } else {
-                Cursor cursor = getApplicationContext().getContentResolver().query(DatabaseContract.teams_table.CONTENT_URI,
-                        null,
-                        DatabaseContract.teams_table.COL_LEAGUE_ID + " = ?",
-                        new String[]{league},
-                        null);
-                cursor.moveToFirst();
+//                Cursor cursor = getApplicationContext().getContentResolver().query(DatabaseContract.teams_table.CONTENT_URI,
+//                        null,
+//                        DatabaseContract.teams_table.COL_LEAGUE_ID + " = ?",
+//                        new String[]{league},
+//                        null);
+//                cursor.moveToFirst();
 
-                int INDEX_TEAM_NAME = cursor.getColumnIndex(DatabaseContract.teams_table.COL_TEAM_FULLNAME);
-                int INDEX_LEAGUE_ID = cursor.getColumnIndex(DatabaseContract.teams_table.COL_LEAGUE_ID);
+//                int INDEX_TEAM_NAME = cursor.getColumnIndex(DatabaseContract.teams_table.COL_TEAM_FULLNAME);
+//                int INDEX_LEAGUE_ID = cursor.getColumnIndex(DatabaseContract.teams_table.COL_LEAGUE_ID);
 
-                while (!cursor.isLast()) {
-                    Log.v(LOG_TAG, cursor.getString(INDEX_TEAM_NAME) + " " + cursor.getInt(INDEX_LEAGUE_ID));
-                    cursor.moveToNext();
-                }
+                //while (!cursor.isLast()) {
+                    //Log.v(LOG_TAG, cursor.getString(INDEX_TEAM_NAME) + " " + cursor.getInt(INDEX_LEAGUE_ID));
+                    //cursor.moveToNext();
+                //}
                 Log.v(LOG_TAG, "League: " + league +" NOT FETCHED, ALREADY IN THE BASE");
             }
         }

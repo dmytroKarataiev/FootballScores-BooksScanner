@@ -4,11 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
+
+import barqsoft.footballscores.data.DatabaseContract;
 
 /**
  * Created by yehya khaled on 2/26/2015.
@@ -23,6 +28,11 @@ public class scoresAdapter extends CursorAdapter {
     public static final int COL_MATCHDAY = 9;
     public static final int COL_ID = 8;
     public static final int COL_MATCHTIME = 2;
+    public static final int COL_HOME_ID = 10;
+    public static final int COL_AWAY_ID = 11;
+
+    private ViewHolder mHolder;
+
     public double detail_match_id = 0;
     private String FOOTBALL_SCORES_HASHTAG = "#Football_Scores";
 
@@ -41,17 +51,35 @@ public class scoresAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, final Context context, Cursor cursor) {
-        final ViewHolder mHolder = (ViewHolder) view.getTag();
+
+
+        mHolder = (ViewHolder) view.getTag();
         mHolder.home_name.setText(cursor.getString(COL_HOME));
         mHolder.away_name.setText(cursor.getString(COL_AWAY));
         mHolder.date.setText(cursor.getString(COL_MATCHTIME));
         mHolder.score.setText(Utilies.getScores(cursor.getInt(COL_HOME_GOALS), cursor.getInt(COL_AWAY_GOALS)));
         mHolder.match_id = cursor.getDouble(COL_ID);
-        mHolder.home_crest.setImageResource(Utilies.getTeamCrestByTeamName(
-                cursor.getString(COL_HOME)));
-        mHolder.away_crest.setImageResource(Utilies.getTeamCrestByTeamName(
-                cursor.getString(COL_AWAY)
-        ));
+
+        // Tried to supply image urls from API, but 99% of images are SVGs there
+        // That is why some crests are local, some png will be from urls, majority without images
+        String homeUrl = getCrestUrl(context, cursor.getInt(COL_LEAGUE), cursor.getInt(COL_HOME_ID));
+        String awayUrl = getCrestUrl(context, cursor.getInt(COL_LEAGUE), cursor.getInt(COL_AWAY_ID));
+        Log.v("LINKS", homeUrl + " " + awayUrl);
+        if (Utilies.getTeamCrestByTeamName(cursor.getString(COL_HOME)) != R.drawable.no_icon) {
+            mHolder.home_crest.setImageResource(Utilies.getTeamCrestByTeamName(
+                            cursor.getString(COL_HOME)));
+        } else {
+            Picasso.with(context).load(homeUrl).into(mHolder.home_crest);
+        }
+
+        if (Utilies.getTeamCrestByTeamName(cursor.getString(COL_AWAY)) != R.drawable.no_icon) {
+            mHolder.away_crest.setImageResource(Utilies.getTeamCrestByTeamName(
+                    cursor.getString(COL_AWAY)));
+        } else {
+            Picasso.with(context).load(homeUrl).into(mHolder.away_crest);
+        }
+
+
         //Log.v(FetchScoreTask.LOG_TAG,mHolder.home_name.getText() + " Vs. " + mHolder.away_name.getText() +" id " + String.valueOf(mHolder.match_id));
         //Log.v(FetchScoreTask.LOG_TAG,String.valueOf(detail_match_id));
         LayoutInflater vi = (LayoutInflater) context.getApplicationContext()
@@ -89,6 +117,37 @@ public class scoresAdapter extends CursorAdapter {
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT, ShareText + FOOTBALL_SCORES_HASHTAG);
         return shareIntent;
+    }
+
+    private String getCrestUrl(Context context, int leagueId, int teamId) {
+
+        Log.v("ADAPTER", "IDS: " + Integer.toString(leagueId) + " " + Integer.toString(teamId));
+        Cursor cursor1 = context
+                .getContentResolver()
+                .query(DatabaseContract.teams_table.buildScoreWithId(),
+                        null,
+                        null,
+                        new String[]{Integer.toString(leagueId), Integer.toString(teamId)},
+                        null);
+
+
+        if (cursor1 != null && cursor1.moveToFirst()) {
+            int INDEX_URL = cursor1.getColumnIndex(DatabaseContract.teams_table.COL_TEAM_CREST_PATH);
+            String url = cursor1.getString(INDEX_URL);
+            Log.v("LOG ADAPTER", url);
+            cursor1.close();
+
+            return url;
+        }
+
+        if (cursor1 != null) {
+            cursor1.close();
+        }
+        Log.v("LOG ADAPTER", "nothing");
+
+
+        return "";
+
     }
 
 }
