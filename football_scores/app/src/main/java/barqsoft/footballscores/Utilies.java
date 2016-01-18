@@ -8,21 +8,37 @@ import android.util.Log;
 public class Utilies
 {
     // TODO: Update numbers to reflect real data
-    public static final int SERIE_A = 357;
-    public static final int PREMIER_LEGAUE = 354;
-    public static final int CHAMPIONS_LEAGUE = 362;
-    public static final int PRIMERA_DIVISION = 358;
-    public static final int BUNDESLIGA = 351;
+    public static final int BUNDESLIGA_1 = 394;
+    public static final int BUNDESLIGA_2 = 395;
+    public static final int LIGUE_1 = 396;
+    public static final int LIGUE_2 = 397;
+    public static final int PREMIER_LEGAUE = 398;
+    public static final int PRIMERA = 399;
+    public static final int SEGUNDA = 400;
+    public static final int SERIA_A = 401;
+    public static final int PRIMEIRA = 402;
+    public static final int BUNDESLIGA_3 = 403;
+    public static final int EREDIVISIE = 404;
+    public static final int CHAMPIONS_LEAGUE = 405;
+
     public static String getLeague(int league_num)
     {
         Log.v("League", "num: " + league_num);
         switch (league_num)
         {
-            case SERIE_A : return "Seria A";
-            case PREMIER_LEGAUE : return "Premier League";
-            case CHAMPIONS_LEAGUE : return "UEFA Champions League";
-            case PRIMERA_DIVISION : return "Primera Division";
-            case BUNDESLIGA : return "Bundesliga";
+            case BUNDESLIGA_1 : return "1. Bundesliga 2015/16";
+            case BUNDESLIGA_2 : return "2. Bundesliga 2015/16";
+            case LIGUE_1 : return "Ligue 1 2015/16";
+            case LIGUE_2 : return "Ligue 2 2015/16";
+            case PREMIER_LEGAUE : return "Premier League 2015/16";
+            case PRIMERA : return "Primera Division 2015/16";
+            case SEGUNDA : return "Segunda Division 2015/16";
+            case SERIA_A : return "Serie A 2015/16";
+            case PRIMEIRA : return "Primeira Liga 2015/16";
+            case BUNDESLIGA_3 : return "3. Bundesliga 2015/16";
+            case EREDIVISIE : return "Eredivisie 2015/16";
+            case CHAMPIONS_LEAGUE : return "Champions League 2015/16";
+
             default: return "Not known League Please report";
         }
     }

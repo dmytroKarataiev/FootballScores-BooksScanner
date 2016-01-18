@@ -8,16 +8,17 @@ import android.provider.BaseColumns;
 /**
  * Created by yehya khaled on 2/25/2015.
  */
-public class DatabaseContract
-{
+public class DatabaseContract {
     public static final String SCORES_TABLE = "scores_table";
     public static final String TEAMS_TABLE = "teams_table";
 
-    public static final class teams_table implements BaseColumns
-    {
+    public static final class teams_table implements BaseColumns {
         //Table data
         public static final String COL_TEAM_ID = "team_id";
+        public static final String COL_TEAM_FULLNAME = "full_name";
+        public static final String COL_TEAM_NAME = "name";
         public static final String COL_TEAM_CREST_PATH = "crest_path";
+        public static final String COL_LEAGUE_ID = "league_id";
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(TEAMS_TABLE).build();
 
@@ -31,8 +32,7 @@ public class DatabaseContract
         }
     }
 
-    public static final class scores_table implements BaseColumns
-    {
+    public static final class scores_table implements BaseColumns {
         //Table data
         public static final String LEAGUE_COL = "league";
         public static final String DATE_COL = "date";
@@ -49,7 +49,7 @@ public class DatabaseContract
         public static final String AWAY_CREST_URL = "awayTeamCrestUrl";
 
         //public static Uri SCORES_CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH)
-                //.build();
+        //.build();
 
         //Types
         public static final String CONTENT_TYPE =
@@ -57,21 +57,21 @@ public class DatabaseContract
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH;
 
-        public static Uri buildScoreWithLeague()
-        {
+        public static Uri buildScoreWithLeague() {
             return BASE_CONTENT_URI.buildUpon().appendPath("league").build();
         }
-        public static Uri buildScoreWithId()
-        {
+
+        public static Uri buildScoreWithId() {
             return BASE_CONTENT_URI.buildUpon().appendPath("id").build();
         }
-        public static Uri buildScoreWithDate()
-        {
+
+        public static Uri buildScoreWithDate() {
             return BASE_CONTENT_URI.buildUpon().appendPath("date").build();
         }
     }
+
     //URI data
     public static final String CONTENT_AUTHORITY = "barqsoft.footballscores";
     public static final String PATH = "scores";
-    public static Uri BASE_CONTENT_URI = Uri.parse("content://"+CONTENT_AUTHORITY);
+    public static Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 }

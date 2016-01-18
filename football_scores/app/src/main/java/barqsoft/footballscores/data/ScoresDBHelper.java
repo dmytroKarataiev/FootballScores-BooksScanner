@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class ScoresDBHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "Scores.db";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     public ScoresDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -35,13 +35,24 @@ public class ScoresDBHelper extends SQLiteOpenHelper {
                 + " UNIQUE (" + DatabaseContract.scores_table.MATCH_ID + ") ON CONFLICT REPLACE"
                 + " );";
         db.execSQL(CreateScoresTable);
+
+        final String CreateTeamsTable = "CREATE TABLE " + DatabaseContract.TEAMS_TABLE + " ("
+                + DatabaseContract.teams_table._ID + " INTEGER PRIMARY KEY,"
+                + DatabaseContract.teams_table.COL_TEAM_ID + " INTEGER NOT NULL,"
+                + DatabaseContract.teams_table.COL_TEAM_FULLNAME + " TEXT NOT NULL,"
+                + DatabaseContract.teams_table.COL_TEAM_NAME + " TEXT NOT NULL,"
+                + DatabaseContract.teams_table.COL_TEAM_CREST_PATH + " TEXT,"
+                + DatabaseContract.teams_table.COL_LEAGUE_ID + " INTEGER NOT NULL" + ");";
+
+        db.execSQL(CreateTeamsTable);
+
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         //Remove old values when upgrading.
         db.execSQL("DROP TABLE IF EXISTS " + DatabaseContract.SCORES_TABLE);
-
+        db.execSQL("DROP TABLE IF EXISTS " + DatabaseContract.TEAMS_TABLE);
         // If we drop the table on update we have to create it again
         onCreate(db);
     }

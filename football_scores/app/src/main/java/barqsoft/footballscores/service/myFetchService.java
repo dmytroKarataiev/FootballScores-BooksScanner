@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
@@ -30,6 +31,8 @@ import barqsoft.footballscores.data.DatabaseContract;
 public class myFetchService extends IntentService {
     public static final String LOG_TAG = "myFetchService";
 
+    final String[] LEAGUES = {"394", "395", "396", "397", "398", "399", "400", "401", "402", "403", "404", "405"};
+
     public myFetchService() {
         super("myFetchService");
     }
@@ -39,7 +42,38 @@ public class myFetchService extends IntentService {
         getData("n2");
         getData("p2");
 
-        return;
+        for (String league : LEAGUES) {
+            // To prevent excessive calls to the API we check if we have teams in the db and links to their crests
+            if (!getApplicationContext()
+                    .getContentResolver()
+                    .query(DatabaseContract.teams_table.CONTENT_URI,
+                            null,
+                            DatabaseContract.teams_table.COL_LEAGUE_ID + " = ?",
+                            new String[]{league},
+                            null)
+                    .moveToFirst()) {
+
+                getCrestUrl(league);
+                Log.v(LOG_TAG, "League: " + league + " ADDED");
+            } else {
+                Cursor cursor = getApplicationContext().getContentResolver().query(DatabaseContract.teams_table.CONTENT_URI,
+                        null,
+                        DatabaseContract.teams_table.COL_LEAGUE_ID + " = ?",
+                        new String[]{league},
+                        null);
+                cursor.moveToFirst();
+
+                int INDEX_TEAM_NAME = cursor.getColumnIndex(DatabaseContract.teams_table.COL_TEAM_FULLNAME);
+                int INDEX_LEAGUE_ID = cursor.getColumnIndex(DatabaseContract.teams_table.COL_LEAGUE_ID);
+
+                while (!cursor.isLast()) {
+                    Log.v(LOG_TAG, cursor.getString(INDEX_TEAM_NAME) + " " + cursor.getInt(INDEX_LEAGUE_ID));
+                    cursor.moveToNext();
+                }
+                Log.v(LOG_TAG, "League: " + league +" NOT FETCHED, ALREADY IN THE BASE");
+            }
+        }
+
     }
 
     private void getData(String timeFrame) {
@@ -54,7 +88,6 @@ public class myFetchService extends IntentService {
                 .buildUpon()
                 .appendQueryParameter(QUERY_TIME_FRAME, timeFrame)
                 .build();
-        Log.v(LOG_TAG, fetch_build.toString());
         String JSON_data = null;
 
         OkHttpClient client = new OkHttpClient();
@@ -109,6 +142,7 @@ public class myFetchService extends IntentService {
         final String PRIMERA_LIGA = "402";
         final String Bundesliga3 = "403";
         final String EREDIVISIE = "404";
+        final String CHAMPIONS_LEAGUE = "405";
 
 
         final String SEASON_LINK = "http://api.football-data.org/alpha/soccerseasons/";
@@ -159,14 +193,9 @@ public class myFetchService extends IntentService {
 
                 home_id = match_data.getJSONObject(LINKS).getJSONObject(HOME_ID).getString("href");
                 home_id = home_id.replace(TEAM_LINK, "");
-                Log.v(LOG_TAG, "team ID: " + home_id);
-                //getCrestUrl(home_id);
 
                 away_id = match_data.getJSONObject(LINKS).getJSONObject(AWAY_ID).getString("href");
                 away_id = away_id.replace(TEAM_LINK, "");
-                Log.v(LOG_TAG, "team ID: " + away_id);
-                //getCrestUrl(away_id);
-
 
                 //This if statement controls which leagues we're interested in the data from.
                 //add leagues here in order to have them be added to the DB.
@@ -227,7 +256,6 @@ public class myFetchService extends IntentService {
                     match_values.put(DatabaseContract.scores_table.HOME_ID, home_id);
                     match_values.put(DatabaseContract.scores_table.AWAY_ID, away_id);
 
-                    Log.v(LOG_TAG, League);
                     match_values.put(DatabaseContract.scores_table.MATCH_DAY, match_day);
                     //log spam
 
@@ -256,15 +284,14 @@ public class myFetchService extends IntentService {
     }
 
     // TODO: Fetch crests elegantly
-    private void getCrestUrl(String teamId) {
+    private void getCrestUrl(String leagueId) {
 
         final String API_PARAM = "X-Auth-Token";
         final String API_KEY = BuildConfig.FOOTBALL_API_KEY;
-        String jsonUrl = "http://api.football-data.org/alpha/teams/";
+        String jsonUrl = "http://api.football-data.org/alpha/soccerseasons/" + leagueId + "/teams";
 
         Uri fetchCrest = Uri.parse(jsonUrl)
                 .buildUpon()
-                .appendPath(teamId)
                 .build();
 
         String JSON_data = null;
@@ -281,7 +308,50 @@ public class myFetchService extends IntentService {
             JSON_data = response.body().string();
             response.body().close();
 
-            Log.v(LOG_TAG, "crest info " + JSON_data);
+            //TODO: Parse JSON
+            final String TEAMS = "teams";
+
+            // For each team
+            final String FULLNAME = "name";
+            final String NAME = "shortName";
+            final String CREST_URL = "crestUrl";
+            final String LINKS = "_links";
+            final String SELF = "self";
+            final String HREF = "href";
+            final String TEAM_LINK = "http://api.football-data.org/alpha/teams/";
+
+            JSONArray teams = new JSONObject(JSON_data).getJSONArray(TEAMS);
+
+            Vector<ContentValues> values = new Vector<>(teams.length());
+            for (int i = 0, n = teams.length(); i < n; i++) {
+                JSONObject team = teams.getJSONObject(i);
+
+                String fullName = team.getString(FULLNAME);
+                String name = team.getString(NAME);
+                String url = team.getString(CREST_URL);
+                String teamId = team.getJSONObject(LINKS).getJSONObject(SELF).getString(HREF);
+                teamId = teamId.replace(TEAM_LINK, "");
+                Log.v(LOG_TAG, "TEAMS TO INSERT: " + fullName + " " + name + " " + url + " " + teamId);
+
+                ContentValues team_values = new ContentValues();
+                team_values.put(DatabaseContract.teams_table.COL_TEAM_ID, teamId);
+                team_values.put(DatabaseContract.teams_table.COL_TEAM_FULLNAME, fullName);
+                team_values.put(DatabaseContract.teams_table.COL_TEAM_NAME, name);
+                team_values.put(DatabaseContract.teams_table.COL_TEAM_CREST_PATH, url);
+                team_values.put(DatabaseContract.teams_table.COL_LEAGUE_ID, leagueId);
+
+                values.add(team_values);
+
+            }
+
+            //TODO: Add to the DB
+            int inserted_data = 0;
+            ContentValues[] insert_data = new ContentValues[values.size()];
+            values.toArray(insert_data);
+            inserted_data = getApplicationContext().getContentResolver().bulkInsert(
+                    DatabaseContract.teams_table.CONTENT_URI, insert_data);
+
+            Log.v(LOG_TAG,"Succesfully Inserted : " + String.valueOf(inserted_data));
 
         } catch (Exception e) {
             Log.e(LOG_TAG, "Exception here" + e.getMessage());
