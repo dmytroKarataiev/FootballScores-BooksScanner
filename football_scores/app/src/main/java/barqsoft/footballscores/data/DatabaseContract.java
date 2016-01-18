@@ -1,6 +1,7 @@
 package barqsoft.footballscores.data;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -10,6 +11,26 @@ import android.provider.BaseColumns;
 public class DatabaseContract
 {
     public static final String SCORES_TABLE = "scores_table";
+    public static final String TEAMS_TABLE = "teams_table";
+
+    public static final class teams_table implements BaseColumns
+    {
+        //Table data
+        public static final String COL_TEAM_ID = "team_id";
+        public static final String COL_TEAM_CREST_PATH = "crest_path";
+
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(TEAMS_TABLE).build();
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + TEAMS_TABLE;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + TEAMS_TABLE;
+
+        public static Uri buildCrestUri(int id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+    }
+
     public static final class scores_table implements BaseColumns
     {
         //Table data
@@ -24,6 +45,8 @@ public class DatabaseContract
         public static final String MATCH_DAY = "match_day";
         public static final String HOME_ID = "homeTeam";
         public static final String AWAY_ID = "awayTeam";
+        public static final String HOME_CREST_URL = "homeTeamCrestUrl";
+        public static final String AWAY_CREST_URL = "awayTeamCrestUrl";
 
         //public static Uri SCORES_CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH)
                 //.build();

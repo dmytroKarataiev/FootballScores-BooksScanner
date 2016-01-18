@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.Vector;
 
+import barqsoft.footballscores.BuildConfig;
 import barqsoft.footballscores.data.DatabaseContract;
 
 /**
@@ -46,10 +47,14 @@ public class myFetchService extends IntentService {
         final String BASE_URL = "http://api.football-data.org/alpha/fixtures"; //Base URL
         final String QUERY_TIME_FRAME = "timeFrame"; //Time Frame parameter to determine days
         //final String QUERY_MATCH_DAY = "matchday";
+        final String API_PARAM = "X-Auth-Token";
+        final String API_KEY = BuildConfig.FOOTBALL_API_KEY;
 
-        Uri fetch_build = Uri.parse(BASE_URL).buildUpon().
-                appendQueryParameter(QUERY_TIME_FRAME, timeFrame).build();
-
+        Uri fetch_build = Uri.parse(BASE_URL)
+                .buildUpon()
+                .appendQueryParameter(QUERY_TIME_FRAME, timeFrame)
+                .build();
+        Log.v(LOG_TAG, fetch_build.toString());
         String JSON_data = null;
 
         OkHttpClient client = new OkHttpClient();
@@ -58,6 +63,7 @@ public class myFetchService extends IntentService {
             URL fetch = new URL(fetch_build.toString());
             Request request = new Request.Builder()
                     .url(fetch)
+                    .addHeader(API_PARAM, API_KEY)
                     .build();
             Response response = client.newCall(request).execute();
             JSON_data = response.body().string();
@@ -66,7 +72,7 @@ public class myFetchService extends IntentService {
         } catch (Exception e) {
             Log.e(LOG_TAG, "Exception here" + e.getMessage());
         }
-        
+
         try {
             if (JSON_data != null) {
                 //This bit is to check if the data contains any matches. If not, we call processJson on the dummy data
@@ -77,7 +83,6 @@ public class myFetchService extends IntentService {
                     //processJSONdata(getString(R.string.dummy_data), getApplicationContext(), false);
                     return;
                 }
-
 
                 processJSONdata(JSON_data, getApplicationContext(), true);
             } else {
@@ -122,6 +127,7 @@ public class myFetchService extends IntentService {
         final String MATCH_DAY = "matchday";
         final String HOME_ID = "homeTeam";
         final String AWAY_ID = "awayTeam";
+        final String CREST_URL = "crestUrl";
 
         //Match data
         String League = null;
@@ -135,7 +141,8 @@ public class myFetchService extends IntentService {
         String match_day = null;
         String home_id = null;
         String away_id = null;
-
+        String home_crest_url = null;
+        String away_crest_url = null;
 
         try {
             JSONArray matches = new JSONObject(JSONdata).getJSONArray(FIXTURES);
@@ -153,10 +160,12 @@ public class myFetchService extends IntentService {
                 home_id = match_data.getJSONObject(LINKS).getJSONObject(HOME_ID).getString("href");
                 home_id = home_id.replace(TEAM_LINK, "");
                 Log.v(LOG_TAG, "team ID: " + home_id);
+                //getCrestUrl(home_id);
 
                 away_id = match_data.getJSONObject(LINKS).getJSONObject(AWAY_ID).getString("href");
                 away_id = away_id.replace(TEAM_LINK, "");
                 Log.v(LOG_TAG, "team ID: " + away_id);
+                //getCrestUrl(away_id);
 
 
                 //This if statement controls which leagues we're interested in the data from.
@@ -242,6 +251,40 @@ public class myFetchService extends IntentService {
             //Log.v(LOG_TAG,"Succesfully Inserted : " + String.valueOf(inserted_data));
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage());
+        }
+
+    }
+
+    // TODO: Fetch crests elegantly
+    private void getCrestUrl(String teamId) {
+
+        final String API_PARAM = "X-Auth-Token";
+        final String API_KEY = BuildConfig.FOOTBALL_API_KEY;
+        String jsonUrl = "http://api.football-data.org/alpha/teams/";
+
+        Uri fetchCrest = Uri.parse(jsonUrl)
+                .buildUpon()
+                .appendPath(teamId)
+                .build();
+
+        String JSON_data = null;
+
+        OkHttpClient client = new OkHttpClient();
+
+        try {
+            URL fetch = new URL(fetchCrest.toString());
+            Request request = new Request.Builder()
+                    .url(fetch)
+                    .addHeader(API_PARAM, API_KEY)
+                    .build();
+            Response response = client.newCall(request).execute();
+            JSON_data = response.body().string();
+            response.body().close();
+
+            Log.v(LOG_TAG, "crest info " + JSON_data);
+
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Exception here" + e.getMessage());
         }
 
     }
