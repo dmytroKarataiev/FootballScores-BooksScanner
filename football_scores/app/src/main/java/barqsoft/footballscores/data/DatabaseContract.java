@@ -1,4 +1,4 @@
-package barqsoft.footballscores;
+package barqsoft.footballscores.data;
 
 import android.content.ContentResolver;
 import android.net.Uri;
@@ -22,6 +22,8 @@ public class DatabaseContract
         public static final String AWAY_GOALS_COL = "away_goals";
         public static final String MATCH_ID = "match_id";
         public static final String MATCH_DAY = "match_day";
+        public static final String HOME_ID = "homeTeam";
+        public static final String AWAY_ID = "awayTeam";
 
         //public static Uri SCORES_CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH)
                 //.build();

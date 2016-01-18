@@ -1,10 +1,13 @@
 package barqsoft.footballscores;
 
+import android.util.Log;
+
 /**
  * Created by yehya khaled on 3/3/2015.
  */
 public class Utilies
 {
+    // TODO: Update numbers to reflect real data
     public static final int SERIE_A = 357;
     public static final int PREMIER_LEGAUE = 354;
     public static final int CHAMPIONS_LEAGUE = 362;
@@ -12,6 +15,7 @@ public class Utilies
     public static final int BUNDESLIGA = 351;
     public static String getLeague(int league_num)
     {
+        Log.v("League", "num: " + league_num);
         switch (league_num)
         {
             case SERIE_A : return "Seria A";
@@ -67,6 +71,9 @@ public class Utilies
 
     public static int getTeamCrestByTeamName (String teamname)
     {
+        Log.v("Crest name", teamname);
+
+        // TODO: Add Picasso and fetch images from server
         if (teamname==null){return R.drawable.no_icon;}
         switch (teamname)
         { //This is the set of icons that are currently in the app. Feel free to find and add more
@@ -83,5 +90,12 @@ public class Utilies
             case "Stoke City FC" : return R.drawable.stoke_city;
             default: return R.drawable.no_icon;
         }
+    }
+
+    public static String getTeamCrestById(int teamId) {
+
+
+
+        return "";
     }
 }
