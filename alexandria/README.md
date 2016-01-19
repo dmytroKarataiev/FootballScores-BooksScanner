@@ -1,6 +1,13 @@
 # Nanodegree Project #3 Alexandria
 * A book list and barcode scanner app.
 
+## Functionality and technologies
+* Built-in barcode scanning functionality (Google Vision API)
+* ContentProvider, SQLite Database
+* IntentService
+* Libraries: Picasso, Google Play Services (vision support)
+* Transltaion to Ukrainian
+
 ## User Feedback for Alexandria:
 
 Lauren says:
