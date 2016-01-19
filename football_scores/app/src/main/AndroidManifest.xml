@@ -6,6 +6,8 @@
         android:name="android.permission.INTERNET"
         android:maxSdkVersion="22" />
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -22,6 +24,8 @@
         </activity>
 
         <provider
+            android:grantUriPermissions="true"
+            android:exported="true"
             android:name=".data.ScoresProvider"
             android:authorities="barqsoft.footballscores" />
 
@@ -37,7 +41,8 @@
 
         <receiver
             android:name=".widget.DetailWidgetProvider"
-            android:label="@string/title_widget_detail" >
+            android:label="@string/title_widget_detail"
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="com.example.android.sunshine.app.ACTION_DATA_UPDATED" />
@@ -47,7 +52,7 @@
         </receiver>
         <service
             android:name=".widget.DetailWidgetRemoteViewsService"
-            android:exported="false"
+            android:exported="true"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
     </application>

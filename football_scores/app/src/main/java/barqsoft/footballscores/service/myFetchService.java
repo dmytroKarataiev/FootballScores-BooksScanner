@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
@@ -44,14 +45,15 @@ public class myFetchService extends IntentService {
         // Adding crest urls only once
         for (String league : LEAGUES) {
             // To prevent excessive calls to the API we check if we have teams in the db and links to their crests
-            if (!getApplicationContext()
+            Cursor cursor = getApplicationContext()
                     .getContentResolver()
                     .query(DatabaseContract.teams_table.CONTENT_URI,
                             null,
                             DatabaseContract.teams_table.COL_LEAGUE_ID + " = ?",
                             new String[]{league},
-                            null)
-                    .moveToFirst()) {
+                            null);
+
+            if (cursor != null && !cursor.moveToFirst()) {
 
                 getCrestUrl(league);
                 Log.v(LOG_TAG, "League: " + league + " ADDED");
@@ -72,7 +74,12 @@ public class myFetchService extends IntentService {
                 }*/
             //Log.v(LOG_TAG, "League: " + league +" NOT FETCHED, ALREADY IN THE BASE");
             // }
+            if (cursor != null) {
+                cursor.close();
+            }
+
         }
+
 
     }
 

@@ -1,8 +1,10 @@
 package barqsoft.footballscores.widget;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
@@ -11,8 +13,11 @@ import android.widget.AdapterView;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+import com.bumptech.glide.Glide;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
 import barqsoft.footballscores.R;
 import barqsoft.footballscores.Utilies;
@@ -64,15 +69,16 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
                 //String location = Utility.getPreferredLocation(DetailWidgetRemoteViewsService.this);
                 //Uri weatherForLocationUri = WeatherContract.WeatherEntry
                 //        .buildWeatherLocationWithStartDate(location, System.currentTimeMillis());
-                Date fragmentdate = new Date(System.currentTimeMillis()+(86400000));
+                Date fragmentdate = new Date(System.currentTimeMillis()+(-2 * 86400000));
+                Date fragmentdatePlus = new Date(System.currentTimeMillis()+(5 * 86400000));
                 SimpleDateFormat mformat = new SimpleDateFormat("yyyy-MM-dd");
 
-                data = getContentResolver().query(DatabaseContract.BASE_CONTENT_URI,
+                data = getContentResolver().query(DatabaseContract.scores_table.buildScoreWithDate5(),
                         null,
                         null,
-                        //new String[]{ mformat.format(fragmentdate) },
-                        null,
-                        null);
+                        new String[]{ mformat.format(fragmentdate), mformat.format(fragmentdatePlus) },
+                        //null,
+                        DatabaseContract.scores_table.DATE_COL + " DESC");
 
                 Log.v(LOG_TAG, Boolean.toString(data != null) + " AAAAA!!");
 
@@ -100,8 +106,46 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
 
                 RemoteViews views = new RemoteViews(getPackageName(), R.layout.widget_list_item);
 
-                views.setImageViewResource(R.id.home_crest, R.drawable.arsenal);
-                views.setImageViewResource(R.id.away_crest, R.drawable.arsenal);
+                //views.setImageViewResource(R.id.home_crest, R.drawable.arsenal);
+                //views.setImageViewResource(R.id.away_crest, R.drawable.arsenal);
+
+                Context context = getApplicationContext();
+
+                Bitmap homeCrestBitmap = null;
+                String homeUrl = Utilies.getCrestUrl(context, data.getInt(COL_LEAGUE), data.getInt(COL_HOME_ID));
+                try {
+                    if (!homeUrl.contains("svg")) {
+                        homeCrestBitmap = Glide.with(DetailWidgetRemoteViewsService.this)
+                                .load(homeUrl)
+                                .asBitmap()
+                                .error(R.drawable.no_icon)
+                                .into(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL, com.bumptech.glide.request.target.Target.SIZE_ORIGINAL).get();
+                        views.setImageViewBitmap(R.id.home_crest, homeCrestBitmap);
+                    } else {
+                        views.setImageViewResource(R.id.home_crest, R.drawable.no_icon);
+                    }
+                } catch (InterruptedException | ExecutionException e) {
+                    Log.e(LOG_TAG, "Error retrieving large icon from " + homeUrl, e);
+                }
+
+
+                Bitmap awayCrestBitmap = null;
+                String awayUrl = Utilies.getCrestUrl(context, data.getInt(COL_LEAGUE), data.getInt(COL_AWAY_ID));
+                try {
+                    if (!awayUrl.contains("svg")) {
+                        awayCrestBitmap = Glide.with(DetailWidgetRemoteViewsService.this)
+                                .load(awayUrl)
+                                .asBitmap()
+                                .error(R.drawable.no_icon)
+                                .into(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL, com.bumptech.glide.request.target.Target.SIZE_ORIGINAL).get();
+                        views.setImageViewBitmap(R.id.away_crest, awayCrestBitmap);
+                    } else {
+                        views.setImageViewResource(R.id.away_crest, R.drawable.no_icon);
+                    }
+                } catch (InterruptedException | ExecutionException e) {
+                    Log.e(LOG_TAG, "Error retrieving large icon from " + homeUrl, e);
+                }
+
 
 //                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
 //                    setRemoteContentDescription(views, description);

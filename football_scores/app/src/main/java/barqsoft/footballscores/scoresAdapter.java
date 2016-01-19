@@ -13,8 +13,6 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import barqsoft.footballscores.data.DatabaseContract;
-
 /**
  * Created by yehya khaled on 2/26/2015.
  */
@@ -62,8 +60,8 @@ public class scoresAdapter extends CursorAdapter {
 
         // Tried to supply image urls from API, but 99% of images are SVGs there
         // That is why some crests are local, some png will be from urls, majority without images
-        String homeUrl = getCrestUrl(context, cursor.getInt(COL_LEAGUE), cursor.getInt(COL_HOME_ID));
-        String awayUrl = getCrestUrl(context, cursor.getInt(COL_LEAGUE), cursor.getInt(COL_AWAY_ID));
+        String homeUrl = Utilies.getCrestUrl(context, cursor.getInt(COL_LEAGUE), cursor.getInt(COL_HOME_ID));
+        String awayUrl = Utilies.getCrestUrl(context, cursor.getInt(COL_LEAGUE), cursor.getInt(COL_AWAY_ID));
         Log.v("LINKS", homeUrl + " " + awayUrl);
         if (Utilies.getTeamCrestByTeamName(cursor.getString(COL_HOME)) != R.drawable.no_icon) {
             mHolder.home_crest.setImageResource(Utilies.getTeamCrestByTeamName(
@@ -119,38 +117,6 @@ public class scoresAdapter extends CursorAdapter {
         return shareIntent;
     }
 
-    /**
-     * Method to get URLs from the database for Crests
-     * @param context from which call is being made
-     * @param leagueId id of the League
-     * @param teamId id of the Team
-     * @return String URL for the crest from the database
-     */
-    private String getCrestUrl(Context context, int leagueId, int teamId) {
 
-        Cursor cursor1 = context
-                .getContentResolver()
-                .query(DatabaseContract.teams_table.buildScoreWithId(),
-                        null,
-                        null,
-                        new String[]{Integer.toString(leagueId), Integer.toString(teamId)},
-                        null);
-
-
-        if (cursor1 != null && cursor1.moveToFirst()) {
-            int INDEX_URL = cursor1.getColumnIndex(DatabaseContract.teams_table.COL_TEAM_CREST_PATH);
-            String url = cursor1.getString(INDEX_URL);
-            cursor1.close();
-
-            return url;
-        }
-
-        if (cursor1 != null) {
-            cursor1.close();
-        }
-
-        return "";
-
-    }
 
 }

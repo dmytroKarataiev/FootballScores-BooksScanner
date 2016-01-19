@@ -1,6 +1,10 @@
 package barqsoft.footballscores;
 
+import android.content.Context;
+import android.database.Cursor;
 import android.util.Log;
+
+import barqsoft.footballscores.data.DatabaseContract;
 
 /**
  * Created by yehya khaled on 3/3/2015.
@@ -104,6 +108,40 @@ public class Utilies
             case "Stoke City FC" : return R.drawable.stoke_city;
             default: return R.drawable.no_icon;
         }
+    }
+
+    /**
+     * Method to get URLs from the database for Crests
+     * @param context from which call is being made
+     * @param leagueId id of the League
+     * @param teamId id of the Team
+     * @return String URL for the crest from the database
+     */
+    public static String getCrestUrl(Context context, int leagueId, int teamId) {
+
+        Cursor cursor1 = context
+                .getContentResolver()
+                .query(DatabaseContract.teams_table.buildScoreWithId(),
+                        null,
+                        null,
+                        new String[]{Integer.toString(leagueId), Integer.toString(teamId)},
+                        null);
+
+
+        if (cursor1 != null && cursor1.moveToFirst()) {
+            int INDEX_URL = cursor1.getColumnIndex(DatabaseContract.teams_table.COL_TEAM_CREST_PATH);
+            String url = cursor1.getString(INDEX_URL);
+            cursor1.close();
+
+            return url;
+        }
+
+        if (cursor1 != null) {
+            cursor1.close();
+        }
+
+        return "";
+
     }
 
 }
