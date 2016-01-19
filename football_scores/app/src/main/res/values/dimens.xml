@@ -8,6 +8,9 @@
     <dimen name="Score">30sp</dimen>
     <dimen name="League">15sp</dimen>
 
+    <dimen name="list_image_size">44dp</dimen>
+
+
     <!-- Widget dimensions -->
     <dimen name="widget_detail_default_width">250dp</dimen>
     <dimen name="widget_detail_default_height">180dp</dimen>
@@ -26,6 +29,7 @@
     <dimen name="forecast_temperature_space">8dp</dimen>
     <dimen name="list_icon">40dp</dimen>
     <dimen name="forecast_detail_padding_wide">16dp</dimen>
+
 
 
 

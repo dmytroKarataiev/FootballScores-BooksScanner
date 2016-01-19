@@ -27,5 +27,4 @@ dependencies {
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.squareup.okhttp:okhttp:2.7.0'
-    compile files('src/main/java/barqsoft/footballscores/libs/svg-android.jar')
 }

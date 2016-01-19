@@ -7,9 +7,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.util.Log;
-
-import java.util.Arrays;
 
 /**
  * Created by yehya khaled on 2/25/2015.
@@ -57,7 +54,6 @@ public class ScoresProvider extends ContentProvider {
             } else if (link.contentEquals(DatabaseContract.teams_table.CONTENT_URI.toString())) {
                 return TEAMS;
             } else if (link.contentEquals(DatabaseContract.teams_table.buildScoreWithId().toString())) {
-                Log.v("PROVIDER", "MAtch crest");
                 return TEAM_CREST;
             } else if (link.contentEquals(DatabaseContract.scores_table.buildScoreWithDate().toString())) {
                 return MATCHES_WITH_DATE;
@@ -96,7 +92,6 @@ public class ScoresProvider extends ContentProvider {
             case TEAMS:
                 return DatabaseContract.teams_table.CONTENT_TYPE;
             case TEAM_CREST:
-                Log.v("PROVIDER", "crest");
                 return DatabaseContract.teams_table.CONTENT_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri :" + uri);
@@ -123,11 +118,9 @@ public class ScoresProvider extends ContentProvider {
                         projection, TEAMS_BY_LEAGUE_ID, selectionArgs, null, null, sortOrder);
                 break;
             case TEAM_CREST:
-                Log.v("QUERY", "crest");
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         DatabaseContract.TEAMS_TABLE,
                         projection, TEAMS_BY_LEAGUE_ID_AND_CREST, selectionArgs, null, null, sortOrder);
-                Log.v("QUERY", Arrays.toString(retCursor.getColumnNames()));
                 break;
             case MATCHES_WITH_DATE:
                 //Log.v(FetchScoreTask.LOG_TAG,selectionArgs[1]);

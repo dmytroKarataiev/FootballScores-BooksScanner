@@ -69,14 +69,14 @@ public class scoresAdapter extends CursorAdapter {
             mHolder.home_crest.setImageResource(Utilies.getTeamCrestByTeamName(
                             cursor.getString(COL_HOME)));
         } else {
-            Picasso.with(context).load(homeUrl).into(mHolder.home_crest);
+            Picasso.with(context).load(homeUrl).error(R.drawable.no_icon).into(mHolder.home_crest);
         }
 
         if (Utilies.getTeamCrestByTeamName(cursor.getString(COL_AWAY)) != R.drawable.no_icon) {
             mHolder.away_crest.setImageResource(Utilies.getTeamCrestByTeamName(
                     cursor.getString(COL_AWAY)));
         } else {
-            Picasso.with(context).load(homeUrl).into(mHolder.away_crest);
+            Picasso.with(context).load(awayUrl).error(R.drawable.no_icon).into(mHolder.away_crest);
         }
 
 
@@ -119,9 +119,15 @@ public class scoresAdapter extends CursorAdapter {
         return shareIntent;
     }
 
+    /**
+     * Method to get URLs from the database for Crests
+     * @param context from which call is being made
+     * @param leagueId id of the League
+     * @param teamId id of the Team
+     * @return String URL for the crest from the database
+     */
     private String getCrestUrl(Context context, int leagueId, int teamId) {
 
-        Log.v("ADAPTER", "IDS: " + Integer.toString(leagueId) + " " + Integer.toString(teamId));
         Cursor cursor1 = context
                 .getContentResolver()
                 .query(DatabaseContract.teams_table.buildScoreWithId(),
@@ -134,7 +140,6 @@ public class scoresAdapter extends CursorAdapter {
         if (cursor1 != null && cursor1.moveToFirst()) {
             int INDEX_URL = cursor1.getColumnIndex(DatabaseContract.teams_table.COL_TEAM_CREST_PATH);
             String url = cursor1.getString(INDEX_URL);
-            Log.v("LOG ADAPTER", url);
             cursor1.close();
 
             return url;
@@ -143,8 +148,6 @@ public class scoresAdapter extends CursorAdapter {
         if (cursor1 != null) {
             cursor1.close();
         }
-        Log.v("LOG ADAPTER", "nothing");
-
 
         return "";
 

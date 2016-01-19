@@ -87,8 +87,6 @@ public class Utilies
 
     public static int getTeamCrestByTeamName (String teamname)
     {
-        Log.v("Crest name", teamname);
-
         // TODO: Add Picasso and fetch images from server
         if (teamname==null){return R.drawable.no_icon;}
         switch (teamname)
@@ -108,10 +106,4 @@ public class Utilies
         }
     }
 
-    public static String getTeamCrestById(int teamId) {
-
-
-
-        return "";
-    }
 }

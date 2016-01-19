@@ -41,6 +41,7 @@ public class myFetchService extends IntentService {
         getData("n2");
         getData("p2");
 
+        // Adding crest urls only once
         for (String league : LEAGUES) {
             // To prevent excessive calls to the API we check if we have teams in the db and links to their crests
             if (!getApplicationContext()
@@ -54,23 +55,23 @@ public class myFetchService extends IntentService {
 
                 getCrestUrl(league);
                 Log.v(LOG_TAG, "League: " + league + " ADDED");
-            } else {
-//                Cursor cursor = getApplicationContext().getContentResolver().query(DatabaseContract.teams_table.CONTENT_URI,
-//                        null,
-//                        DatabaseContract.teams_table.COL_LEAGUE_ID + " = ?",
-//                        new String[]{league},
-//                        null);
-//                cursor.moveToFirst();
+            } //else {
+               /* Cursor cursor = getApplicationContext().getContentResolver().query(DatabaseContract.teams_table.CONTENT_URI,
+                        null,
+                        DatabaseContract.teams_table.COL_LEAGUE_ID + " = ?",
+                        new String[]{league},
+                        null);
+                cursor.moveToFirst();
 
-//                int INDEX_TEAM_NAME = cursor.getColumnIndex(DatabaseContract.teams_table.COL_TEAM_FULLNAME);
-//                int INDEX_LEAGUE_ID = cursor.getColumnIndex(DatabaseContract.teams_table.COL_LEAGUE_ID);
+                int INDEX_TEAM_NAME = cursor.getColumnIndex(DatabaseContract.teams_table.COL_TEAM_FULLNAME);
+                int INDEX_LEAGUE_ID = cursor.getColumnIndex(DatabaseContract.teams_table.COL_LEAGUE_ID);
 
-                //while (!cursor.isLast()) {
-                    //Log.v(LOG_TAG, cursor.getString(INDEX_TEAM_NAME) + " " + cursor.getInt(INDEX_LEAGUE_ID));
-                    //cursor.moveToNext();
-                //}
-                Log.v(LOG_TAG, "League: " + league +" NOT FETCHED, ALREADY IN THE BASE");
-            }
+                while (!cursor.isLast()) {
+                    Log.v(LOG_TAG, cursor.getString(INDEX_TEAM_NAME) + " " + cursor.getInt(INDEX_LEAGUE_ID));
+                    cursor.moveToNext();
+                }*/
+            //Log.v(LOG_TAG, "League: " + league +" NOT FETCHED, ALREADY IN THE BASE");
+            // }
         }
 
     }
@@ -251,20 +252,9 @@ public class myFetchService extends IntentService {
                     match_values.put(DatabaseContract.scores_table.HOME_GOALS_COL, Home_goals);
                     match_values.put(DatabaseContract.scores_table.AWAY_GOALS_COL, Away_goals);
                     match_values.put(DatabaseContract.scores_table.LEAGUE_COL, League);
-
                     match_values.put(DatabaseContract.scores_table.HOME_ID, home_id);
                     match_values.put(DatabaseContract.scores_table.AWAY_ID, away_id);
-
                     match_values.put(DatabaseContract.scores_table.MATCH_DAY, match_day);
-                    //log spam
-
-                    //Log.v(LOG_TAG,match_id);
-                    //Log.v(LOG_TAG,mDate);
-                    //Log.v(LOG_TAG,mTime);
-                    //Log.v(LOG_TAG,Home);
-                    //Log.v(LOG_TAG,Away);
-                    //Log.v(LOG_TAG,Home_goals);
-                    //Log.v(LOG_TAG,Away_goals);
 
                     values.add(match_values);
                 }
@@ -282,7 +272,12 @@ public class myFetchService extends IntentService {
 
     }
 
-    // TODO: Fetch crests elegantly
+    /**
+     * Method to get JSON with teams for each league
+     * and then parse for crest urls and put in the team_table
+     *
+     * @param leagueId id of the league
+     */
     private void getCrestUrl(String leagueId) {
 
         final String API_PARAM = "X-Auth-Token";
@@ -307,7 +302,6 @@ public class myFetchService extends IntentService {
             JSON_data = response.body().string();
             response.body().close();
 
-            //TODO: Parse JSON
             final String TEAMS = "teams";
 
             // For each team
@@ -343,14 +337,13 @@ public class myFetchService extends IntentService {
 
             }
 
-            //TODO: Add to the DB
             int inserted_data = 0;
             ContentValues[] insert_data = new ContentValues[values.size()];
             values.toArray(insert_data);
             inserted_data = getApplicationContext().getContentResolver().bulkInsert(
                     DatabaseContract.teams_table.CONTENT_URI, insert_data);
 
-            Log.v(LOG_TAG,"Succesfully Inserted : " + String.valueOf(inserted_data));
+            Log.v(LOG_TAG, "Succesfully Inserted : " + String.valueOf(inserted_data));
 
         } catch (Exception e) {
             Log.e(LOG_TAG, "Exception here" + e.getMessage());
