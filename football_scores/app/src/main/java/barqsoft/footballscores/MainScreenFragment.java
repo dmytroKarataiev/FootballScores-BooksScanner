@@ -1,12 +1,16 @@
 package barqsoft.footballscores;
 
-import android.content.Intent;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,13 +28,29 @@ public class MainScreenFragment extends Fragment implements LoaderManager.Loader
     public static final int SCORES_LOADER = 0;
     private String[] fragmentdate = new String[1];
     private int last_selected_item = -1;
+    private int JOB_ID = 123;
 
     public MainScreenFragment() {
     }
 
+    /**
+     * JobScheduler to make updates energy efficient
+     */
     private void update_scores() {
-        Intent service_start = new Intent(getActivity(), myFetchService.class);
-        getActivity().startService(service_start);
+        //Intent service_start = new Intent(getActivity(), myFetchService.class);
+        //getActivity().startService(service_start);
+
+        ComponentName serviceName = new ComponentName(getActivity(), myFetchService.class);
+        JobInfo jobInfo = new JobInfo.Builder(JOB_ID, serviceName)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
+                .setRequiresDeviceIdle(true)
+                .setRequiresCharging(false)
+                .setPeriodic(86400000)
+                .build();
+
+        JobScheduler scheduler = (JobScheduler) getActivity().getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        int result = scheduler.schedule(jobInfo);
+        if (result == JobScheduler.RESULT_SUCCESS) Log.v("LOG_TAG", "Job scheduled successfully!");
     }
 
     public void setFragmentDate(String date) {

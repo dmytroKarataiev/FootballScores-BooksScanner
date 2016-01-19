@@ -1,11 +1,17 @@
 package barqsoft.footballscores.service;
 
-import android.app.IntentService;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.job.JobParameters;
+import android.app.job.JobService;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import com.squareup.okhttp.OkHttpClient;
@@ -23,22 +29,24 @@ import java.util.TimeZone;
 import java.util.Vector;
 
 import barqsoft.footballscores.BuildConfig;
+import barqsoft.footballscores.MainActivity;
+import barqsoft.footballscores.R;
 import barqsoft.footballscores.data.DatabaseContract;
 
 /**
  * Created by yehya khaled on 3/2/2015.
  */
-public class myFetchService extends IntentService {
+public class myFetchService extends JobService {
+
     public static final String LOG_TAG = "myFetchService";
+    public static final String ACTION_DATA_UPDATE = "barqsoft.footballscores.app.ACTION_DATA_UPDATED";
+
+    private static final int NOTIFICATION_ID = 3004;
 
     final String[] LEAGUES = {"394", "395", "396", "397", "398", "399", "400", "401", "402", "403", "404", "405"};
 
-    public myFetchService() {
-        super("myFetchService");
-    }
-
     @Override
-    protected void onHandleIntent(Intent intent) {
+    public boolean onStartJob(JobParameters params) {
         getData("n2");
         getData("p2");
 
@@ -79,8 +87,15 @@ public class myFetchService extends IntentService {
             }
 
         }
+        updateWidgets();
+        notifyUser();
 
+        return true;
+    }
 
+    @Override
+    public boolean onStopJob(JobParameters params) {
+        return false;
     }
 
     private void getData(String timeFrame) {
@@ -356,6 +371,46 @@ public class myFetchService extends IntentService {
             Log.e(LOG_TAG, "Exception here" + e.getMessage());
         }
 
+    }
+
+    /**
+     * Method to make a notification
+     */
+    public void notifyUser() {
+        Context context = getApplicationContext();
+        Resources resources = context.getResources();
+
+        //build your notification here.
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext())
+                .setColor(resources.getColor(R.color.green01))
+                .setSmallIcon(R.drawable.ic_stat_name)
+                .setContentTitle(getString(R.string.updated))
+                .setContentText(getString(R.string.updated_descr));
+
+        // Intent ti open the app
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        //stackBuilder.addParentStack(MainActivity.class);
+        stackBuilder.addNextIntent(intent);
+
+        PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        mBuilder.setContentIntent(pendingIntent);
+
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+    }
+
+    /**
+     * Send intent to update connected widgets
+     */
+    public void updateWidgets() {
+        // Send intent to the Widget to notify that the data was updated
+        Intent dataUpdated = new Intent(ACTION_DATA_UPDATE)
+                // Ensures that only components in the app will receive the broadcast
+                .setPackage(getApplicationContext().getPackageName());
+        getApplicationContext().sendBroadcast(dataUpdated);
     }
 }
 

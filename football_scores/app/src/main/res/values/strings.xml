@@ -36,6 +36,8 @@
     <!-- Widget -->
     <string name="empty_matches_list">No Matches Information Available</string>
     <string name="title_widget_detail">Soccer Details</string>
+    <string name="updated">Scores were updated!</string>
+    <string name="updated_descr">Press on notification to see more details</string>
 
 
 </resources>

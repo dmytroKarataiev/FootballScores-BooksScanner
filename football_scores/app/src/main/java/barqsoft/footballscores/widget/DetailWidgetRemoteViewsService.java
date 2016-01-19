@@ -24,7 +24,7 @@ import barqsoft.footballscores.Utilies;
 import barqsoft.footballscores.data.DatabaseContract;
 
 /**
- * RemoteViewsService controlling the data being shown in the scrollable weather detail widget
+ * RemoteViewsService controlling the data being shown in the scrollable detail widget
  */
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class DetailWidgetRemoteViewsService extends RemoteViewsService {
@@ -61,14 +61,11 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
                 if (data != null) {
                     data.close();
                 }
+
                 // This method is called by the app hosting the widget (e.g., the launcher)
-                // However, our ContentProvider is not exported so it doesn't have access to the
-                // data. Therefore we need to clear (and finally restore) the calling identity so
-                // that calls use our process and permission
                 final long identityToken = Binder.clearCallingIdentity();
-                //String location = Utility.getPreferredLocation(DetailWidgetRemoteViewsService.this);
-                //Uri weatherForLocationUri = WeatherContract.WeatherEntry
-                //        .buildWeatherLocationWithStartDate(location, System.currentTimeMillis());
+
+                // Dates between which we will be fetching data
                 Date fragmentdate = new Date(System.currentTimeMillis()+(-2 * 86400000));
                 Date fragmentdatePlus = new Date(System.currentTimeMillis()+(5 * 86400000));
                 SimpleDateFormat mformat = new SimpleDateFormat("yyyy-MM-dd");
@@ -105,9 +102,6 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
                 }
 
                 RemoteViews views = new RemoteViews(getPackageName(), R.layout.widget_list_item);
-
-                //views.setImageViewResource(R.id.home_crest, R.drawable.arsenal);
-                //views.setImageViewResource(R.id.away_crest, R.drawable.arsenal);
 
                 Context context = getApplicationContext();
 
@@ -146,17 +140,16 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
                     Log.e(LOG_TAG, "Error retrieving large icon from " + homeUrl, e);
                 }
 
-
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-//                    setRemoteContentDescription(views, description);
-//                }
-
                 String date = data.getString(COL_DATE);
                 String league = Utilies.getLeague(data.getInt(COL_LEAGUE));
                 String scores = Utilies.getScores(data.getInt(COL_HOME_GOALS), data.getInt(COL_AWAY_GOALS));
                 String homeTeam = data.getString(COL_HOME);
                 String awayTeam = data.getString(COL_AWAY);
 
+                // Content Description for each element
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+                    setRemoteContentDescription(views, getString(R.string.app_name) + " " + homeTeam + " vs " + awayTeam);
+                }
 
                 views.setTextViewText(R.id.data_textview, date);
                 views.setTextViewText(R.id.score_textview, scores);
