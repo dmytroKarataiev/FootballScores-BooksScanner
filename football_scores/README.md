@@ -1,6 +1,12 @@
 # Football scores App
 * An app that tracks current and future football matches (soccer, for students in the USA).
 
+## Functionality and technologies
+* Data Storage: ContentProvider, SQLite Database
+* Libraries: OkHttp, Picasso
+* Collection Widget, Notifications, JobScheduler
+* Accessibility and other: RTL, content description, Ukrainian translation
+
 ## User Feedback for Football Scores:
 
 Your Boss says:
