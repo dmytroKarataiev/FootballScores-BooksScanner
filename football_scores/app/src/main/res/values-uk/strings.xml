@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Футбольні Матчі</string>
+    <string name="hello_world">Привіт, світ!</string>
+    <string name="action_settings">Налаштування</string>
+    <string name="test_text">Перевірка</string>
+    <string name="today">Сьгодні</string>
+    <string name="yesterday">Вчора</string>
+    <string name="tomorrow">Завтра</string>
+    <string name="bundesliga">Бундесліга</string>
+    <string name="premierleague">Прем\'єр Ліга</string>
+    <string name="primeradivison">Прімера</string>
+    <string name="seriaa">Серія А</string>
+    <string name="group_stage_text">Груповий етап</string>
+    <string name="first_knockout_round">Перший відбірковий тур</string>
+    <string name="quarter_final">Чвертьфінал</string>
+    <string name="semi_final">Полуфінал</string>
+    <string name="final_text">Фінал</string>
+    <string name="share_text">Поділитись</string>
+    <string name="about">О програмі</string>
+    <string name="title_activity_about">О програмі</string>
+    <string name="about_text">
+        Програма завантажує результати футбольних матчів усіх популярних чемпіонатів.
+        Вся інформація з сайту football-data.org через безкоштовний API.
+        Всі лого завантажені з http://hdlogo.wordpress.com/ з дозволу володаря.
+        Оригінальна версія програми була створена Yahia Khalid Ibn El Walid Ahmed, а модифікована версія була видана студентам Udacity Android Нанодегрі.
+        Якщо є якісь побажання по покращенню програми - пишіть y.k.ibnelwalid@gmail.com.
+
+        Завдання виконав: Дмитро Каратаєв.
+    </string>
+
+    <!-- Widget -->
+    <string name="empty_matches_list">Інформація про матчі недоступна</string>
+    <string name="title_widget_detail">Футбольні деталі</string>
+    <string name="champions_league">Ліга Чемпіонів</string>
+    <string name="matchday_text">Коло</string>
+
+
+</resources>

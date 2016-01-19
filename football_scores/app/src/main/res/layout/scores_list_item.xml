@@ -3,14 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/list_item"
-    android:elevation="4dp"
+    android:elevation="@dimen/elevation"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingTop="5dp">
+        android:paddingTop="@dimen/scores_list_padding">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -89,7 +89,8 @@
     <FrameLayout
         android:id="@+id/details_fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></FrameLayout>
+        android:layout_height="wrap_content"/>
+
 </LinearLayout>
 
 
