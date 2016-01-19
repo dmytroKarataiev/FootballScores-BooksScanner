@@ -74,10 +74,7 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
                         null,
                         null,
                         new String[]{ mformat.format(fragmentdate), mformat.format(fragmentdatePlus) },
-                        //null,
                         DatabaseContract.scores_table.DATE_COL + " DESC");
-
-                Log.v(LOG_TAG, Boolean.toString(data != null) + " AAAAA!!");
 
                 Binder.restoreCallingIdentity(identityToken);
             }

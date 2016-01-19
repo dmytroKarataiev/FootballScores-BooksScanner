@@ -4,7 +4,7 @@
     <string name="app_name">Футбольні Матчі</string>
     <string name="hello_world">Привіт, світ!</string>
     <string name="action_settings">Налаштування</string>
-    <string name="test_text">Перевірка</string>
+    <string name="test_text"></string>
     <string name="today">Сьгодні</string>
     <string name="yesterday">Вчора</string>
     <string name="tomorrow">Завтра</string>
@@ -35,6 +35,8 @@
     <string name="title_widget_detail">Футбольні деталі</string>
     <string name="champions_league">Ліга Чемпіонів</string>
     <string name="matchday_text">Коло</string>
+    <string name="updated">Було оновлено ігр: </string>
+    <string name="updated_descr">Натисніть, щоби отримати більше інформації</string>
 
 
 </resources>

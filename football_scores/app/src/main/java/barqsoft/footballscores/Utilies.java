@@ -2,16 +2,13 @@ package barqsoft.footballscores;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import barqsoft.footballscores.data.DatabaseContract;
 
 /**
  * Created by yehya khaled on 3/3/2015.
  */
-public class Utilies
-{
-    // TODO: Update numbers to reflect real data
+public class Utilies {
     public static final int BUNDESLIGA_1 = 394;
     public static final int BUNDESLIGA_2 = 395;
     public static final int LIGUE_1 = 396;
@@ -25,96 +22,101 @@ public class Utilies
     public static final int EREDIVISIE = 404;
     public static final int CHAMPIONS_LEAGUE = 405;
 
-    public static String getLeague(int league_num)
-    {
-        Log.v("League", "num: " + league_num);
-        switch (league_num)
-        {
-            case BUNDESLIGA_1 : return "1. Bundesliga 2015/16";
-            case BUNDESLIGA_2 : return "2. Bundesliga 2015/16";
-            case LIGUE_1 : return "Ligue 1 2015/16";
-            case LIGUE_2 : return "Ligue 2 2015/16";
-            case PREMIER_LEGAUE : return "Premier League 2015/16";
-            case PRIMERA : return "Primera Division 2015/16";
-            case SEGUNDA : return "Segunda Division 2015/16";
-            case SERIA_A : return "Serie A 2015/16";
-            case PRIMEIRA : return "Primeira Liga 2015/16";
-            case BUNDESLIGA_3 : return "3. Bundesliga 2015/16";
-            case EREDIVISIE : return "Eredivisie 2015/16";
-            case CHAMPIONS_LEAGUE : return "Champions League 2015/16";
+    public static String getLeague(int league_num) {
+        switch (league_num) {
+            case BUNDESLIGA_1:
+                return "1. Bundesliga 2015/16";
+            case BUNDESLIGA_2:
+                return "2. Bundesliga 2015/16";
+            case LIGUE_1:
+                return "Ligue 1 2015/16";
+            case LIGUE_2:
+                return "Ligue 2 2015/16";
+            case PREMIER_LEGAUE:
+                return "Premier League 2015/16";
+            case PRIMERA:
+                return "Primera Division 2015/16";
+            case SEGUNDA:
+                return "Segunda Division 2015/16";
+            case SERIA_A:
+                return "Serie A 2015/16";
+            case PRIMEIRA:
+                return "Primeira Liga 2015/16";
+            case BUNDESLIGA_3:
+                return "3. Bundesliga 2015/16";
+            case EREDIVISIE:
+                return "Eredivisie 2015/16";
+            case CHAMPIONS_LEAGUE:
+                return "Champions League 2015/16";
 
-            default: return "Not known League Please report";
+            default:
+                return "Not known League Please report";
         }
     }
-    public static String getMatchDay(int match_day,int league_num)
-    {
-        if(league_num == CHAMPIONS_LEAGUE)
-        {
-            if (match_day <= 6)
-            {
+
+    public static String getMatchDay(int match_day, int league_num) {
+        if (league_num == CHAMPIONS_LEAGUE) {
+            if (match_day <= 6) {
                 return "Group Stages, Matchday : 6";
-            }
-            else if(match_day == 7 || match_day == 8)
-            {
+            } else if (match_day == 7 || match_day == 8) {
                 return "First Knockout round";
-            }
-            else if(match_day == 9 || match_day == 10)
-            {
+            } else if (match_day == 9 || match_day == 10) {
                 return "QuarterFinal";
-            }
-            else if(match_day == 11 || match_day == 12)
-            {
+            } else if (match_day == 11 || match_day == 12) {
                 return "SemiFinal";
-            }
-            else
-            {
+            } else {
                 return "Final";
             }
-        }
-        else
-        {
+        } else {
             return "Matchday : " + String.valueOf(match_day);
         }
     }
 
-    public static String getScores(int home_goals,int awaygoals)
-    {
-        if(home_goals < 0 || awaygoals < 0)
-        {
+    public static String getScores(int home_goals, int awaygoals) {
+        if (home_goals < 0 || awaygoals < 0) {
             return " - ";
-        }
-        else
-        {
+        } else {
             return String.valueOf(home_goals) + " - " + String.valueOf(awaygoals);
         }
     }
 
-    public static int getTeamCrestByTeamName (String teamname)
-    {
-        // TODO: Add Picasso and fetch images from server
-        if (teamname==null){return R.drawable.no_icon;}
-        switch (teamname)
-        { //This is the set of icons that are currently in the app. Feel free to find and add more
+    public static int getTeamCrestByTeamName(String teamname) {
+        if (teamname == null) {
+            return R.drawable.no_icon;
+        }
+        switch (teamname) { //This is the set of icons that are currently in the app. Feel free to find and add more
             //as you go.
-            case "Arsenal London FC" : return R.drawable.arsenal;
-            case "Manchester United FC" : return R.drawable.manchester_united;
-            case "Swansea City" : return R.drawable.swansea_city_afc;
-            case "Leicester City" : return R.drawable.leicester_city_fc_hd_logo;
-            case "Everton FC" : return R.drawable.everton_fc_logo1;
-            case "West Ham United FC" : return R.drawable.west_ham;
-            case "Tottenham Hotspur FC" : return R.drawable.tottenham_hotspur;
-            case "West Bromwich Albion" : return R.drawable.west_bromwich_albion_hd_logo;
-            case "Sunderland AFC" : return R.drawable.sunderland;
-            case "Stoke City FC" : return R.drawable.stoke_city;
-            default: return R.drawable.no_icon;
+            case "Arsenal London FC":
+                return R.drawable.arsenal;
+            case "Manchester United FC":
+                return R.drawable.manchester_united;
+            case "Swansea City":
+                return R.drawable.swansea_city_afc;
+            case "Leicester City":
+                return R.drawable.leicester_city_fc_hd_logo;
+            case "Everton FC":
+                return R.drawable.everton_fc_logo1;
+            case "West Ham United FC":
+                return R.drawable.west_ham;
+            case "Tottenham Hotspur FC":
+                return R.drawable.tottenham_hotspur;
+            case "West Bromwich Albion":
+                return R.drawable.west_bromwich_albion_hd_logo;
+            case "Sunderland AFC":
+                return R.drawable.sunderland;
+            case "Stoke City FC":
+                return R.drawable.stoke_city;
+            default:
+                return R.drawable.no_icon;
         }
     }
 
     /**
      * Method to get URLs from the database for Crests
-     * @param context from which call is being made
+     *
+     * @param context  from which call is being made
      * @param leagueId id of the League
-     * @param teamId id of the Team
+     * @param teamId   id of the Team
      * @return String URL for the crest from the database
      */
     public static String getCrestUrl(Context context, int leagueId, int teamId) {

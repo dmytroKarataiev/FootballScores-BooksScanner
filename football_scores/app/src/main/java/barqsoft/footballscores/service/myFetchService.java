@@ -87,8 +87,6 @@ public class myFetchService extends JobService {
             }
 
         }
-        updateWidgets();
-        notifyUser();
 
         return true;
     }
@@ -287,6 +285,12 @@ public class myFetchService extends JobService {
             inserted_data = mContext.getContentResolver().bulkInsert(
                     DatabaseContract.BASE_CONTENT_URI, insert_data);
 
+            // Update widgets data
+            updateWidgets();
+
+            // Schedule a notification to the user
+            notifyUser(Integer.toString(inserted_data));
+
             //Log.v(LOG_TAG,"Succesfully Inserted : " + String.valueOf(inserted_data));
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage());
@@ -346,7 +350,6 @@ public class myFetchService extends JobService {
                 String url = team.getString(CREST_URL);
                 String teamId = team.getJSONObject(LINKS).getJSONObject(SELF).getString(HREF);
                 teamId = teamId.replace(TEAM_LINK, "");
-                Log.v(LOG_TAG, "TEAMS TO INSERT: " + fullName + " " + name + " " + url + " " + teamId);
 
                 ContentValues team_values = new ContentValues();
                 team_values.put(DatabaseContract.teams_table.COL_TEAM_ID, teamId);
@@ -376,7 +379,7 @@ public class myFetchService extends JobService {
     /**
      * Method to make a notification
      */
-    public void notifyUser() {
+    public void notifyUser(String info) {
         Context context = getApplicationContext();
         Resources resources = context.getResources();
 
@@ -384,7 +387,7 @@ public class myFetchService extends JobService {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext())
                 .setColor(resources.getColor(R.color.green01))
                 .setSmallIcon(R.drawable.ic_stat_name)
-                .setContentTitle(getString(R.string.updated))
+                .setContentTitle(getString(R.string.updated) + " " + info)
                 .setContentText(getString(R.string.updated_descr));
 
         // Intent ti open the app

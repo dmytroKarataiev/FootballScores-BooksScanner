@@ -4,7 +4,7 @@
     <string name="app_name">Football Scores</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="test_text">Test</string>
+    <string name="test_text"></string>
     <string name="today">Today</string>
     <string name="yesterday">Yesterday</string>
     <string name="tomorrow">Tomorrow</string>
@@ -36,7 +36,7 @@
     <!-- Widget -->
     <string name="empty_matches_list">No Matches Information Available</string>
     <string name="title_widget_detail">Soccer Details</string>
-    <string name="updated">Scores were updated!</string>
+    <string name="updated">Scores were updated, new matches: </string>
     <string name="updated_descr">Press on notification to see more details</string>
 
 
