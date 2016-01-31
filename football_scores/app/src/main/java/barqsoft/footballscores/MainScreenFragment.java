@@ -42,7 +42,7 @@ public class MainScreenFragment extends Fragment implements LoaderManager.Loader
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
                 .setRequiresDeviceIdle(true)
                 .setRequiresCharging(false)
-                .setPeriodic(86400000)
+                .setPeriodic(864)
                 .build();
 
         JobScheduler scheduler = (JobScheduler) getActivity().getSystemService(Context.JOB_SCHEDULER_SERVICE);

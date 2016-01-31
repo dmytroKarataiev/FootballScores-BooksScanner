@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
@@ -97,54 +98,8 @@ public class myFetchService extends JobService {
     }
 
     private void getData(String timeFrame) {
-        //Creating fetch URL
-        final String BASE_URL = "http://api.football-data.org/alpha/fixtures"; //Base URL
-        final String QUERY_TIME_FRAME = "timeFrame"; //Time Frame parameter to determine days
-        //final String QUERY_MATCH_DAY = "matchday";
-        final String API_PARAM = "X-Auth-Token";
-        final String API_KEY = BuildConfig.FOOTBALL_API_KEY;
-
-        Uri fetch_build = Uri.parse(BASE_URL)
-                .buildUpon()
-                .appendQueryParameter(QUERY_TIME_FRAME, timeFrame)
-                .build();
-        String JSON_data = null;
-
-        OkHttpClient client = new OkHttpClient();
-
-        try {
-            URL fetch = new URL(fetch_build.toString());
-            Request request = new Request.Builder()
-                    .url(fetch)
-                    .addHeader(API_PARAM, API_KEY)
-                    .build();
-            Response response = client.newCall(request).execute();
-            JSON_data = response.body().string();
-            response.body().close();
-
-        } catch (Exception e) {
-            Log.e(LOG_TAG, "Exception here" + e.getMessage());
-        }
-
-        try {
-            if (JSON_data != null) {
-                //This bit is to check if the data contains any matches. If not, we call processJson on the dummy data
-                JSONArray matches = new JSONObject(JSON_data).getJSONArray("fixtures");
-                if (matches.length() == 0) {
-                    //if there is no data, call the function on dummy data
-                    //this is expected behavior during the off season.
-                    //processJSONdata(getString(R.string.dummy_data), getApplicationContext(), false);
-                    return;
-                }
-
-                processJSONdata(JSON_data, getApplicationContext(), true);
-            } else {
-                //Could not Connect
-                Log.d(LOG_TAG, "Could not connect to server.");
-            }
-        } catch (Exception e) {
-            Log.e(LOG_TAG, e.getMessage());
-        }
+        MyFetchService myFetchService = new MyFetchService();
+        myFetchService.execute(timeFrame);
     }
 
     private void processJSONdata(String JSONdata, Context mContext, boolean isReal) {
@@ -414,6 +369,64 @@ public class myFetchService extends JobService {
                 // Ensures that only components in the app will receive the broadcast
                 .setPackage(getApplicationContext().getPackageName());
         getApplicationContext().sendBroadcast(dataUpdated);
+    }
+
+    public class MyFetchService extends AsyncTask<String, Void, Void> {
+        @Override
+        protected Void doInBackground(String... params) {
+
+            //Creating fetch URL
+            final String BASE_URL = "http://api.football-data.org/alpha/fixtures"; //Base URL
+            final String QUERY_TIME_FRAME = "timeFrame"; //Time Frame parameter to determine days
+            //final String QUERY_MATCH_DAY = "matchday";
+            final String API_PARAM = "X-Auth-Token";
+            final String API_KEY = BuildConfig.FOOTBALL_API_KEY;
+
+            Uri fetch_build = Uri.parse(BASE_URL)
+                    .buildUpon()
+                    .appendQueryParameter(QUERY_TIME_FRAME, params[0])
+                    .build();
+            String JSON_data = null;
+
+            OkHttpClient client = new OkHttpClient();
+
+            try {
+                URL fetch = new URL(fetch_build.toString());
+                Request request = new Request.Builder()
+                        .url(fetch)
+                        .addHeader(API_PARAM, API_KEY)
+                        .build();
+
+                Response response = client.newCall(request).execute();
+                JSON_data = response.body().string();
+
+                response.body().close();
+            } catch (Exception e) {
+                Log.e(LOG_TAG, "Exception here" + e.getMessage());
+            }
+
+            try {
+                if (JSON_data != null) {
+                    //This bit is to check if the data contains any matches. If not, we call processJson on the dummy data
+                    JSONArray matches = new JSONObject(JSON_data).getJSONArray("fixtures");
+                    if (matches.length() == 0) {
+                        //if there is no data, call the function on dummy data
+                        //this is expected behavior during the off season.
+                        //processJSONdata(getString(R.string.dummy_data), getApplicationContext(), false);
+                        return null;
+                    }
+
+                    processJSONdata(JSON_data, getApplicationContext(), true);
+                } else {
+                    //Could not Connect
+                    Log.d(LOG_TAG, "Could not connect to server.");
+                }
+            } catch (Exception e) {
+                Log.e(LOG_TAG, e.getMessage());
+            }
+
+            return null;
+        }
     }
 }
 
