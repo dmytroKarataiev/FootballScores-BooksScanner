@@ -49,6 +49,7 @@ public class MainScreenFragment extends Fragment implements LoaderManager.Loader
         JobScheduler scheduler = (JobScheduler) getActivity().getSystemService(Context.JOB_SCHEDULER_SERVICE);
         int result = scheduler.schedule(jobInfo);
         if (result == JobScheduler.RESULT_SUCCESS) Log.v("LOG_TAG", "Job scheduled successfully!");
+
     }
 
     public void setFragmentDate(String date) {
@@ -75,6 +76,7 @@ public class MainScreenFragment extends Fragment implements LoaderManager.Loader
                 mAdapter.notifyDataSetChanged();
             }
         });
+
         return rootView;
     }
 
@@ -86,15 +88,6 @@ public class MainScreenFragment extends Fragment implements LoaderManager.Loader
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        //Log.v(FetchScoreTask.LOG_TAG,"loader finished");
-        //cursor.moveToFirst();
-        /*
-        while (!cursor.isAfterLast())
-        {
-            Log.v(FetchScoreTask.LOG_TAG,cursor.getString(1));
-            cursor.moveToNext();
-        }
-        */
 
         int i = 0;
         cursor.moveToFirst();
@@ -102,15 +95,13 @@ public class MainScreenFragment extends Fragment implements LoaderManager.Loader
             i++;
             cursor.moveToNext();
         }
-        //Log.v(FetchScoreTask.LOG_TAG,"Loader query: " + String.valueOf(i));
+
         mAdapter.swapCursor(cursor);
-        //mAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
         mAdapter.swapCursor(null);
     }
-
 
 }

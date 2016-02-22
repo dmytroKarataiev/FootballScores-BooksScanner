@@ -143,6 +143,8 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
                 String homeTeam = data.getString(COL_HOME);
                 String awayTeam = data.getString(COL_AWAY);
 
+                Log.v(LOG_TAG, date + " " + league + " " + scores + " " + homeTeam + " " + awayTeam);
+
                 // Content Description for each element
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
                     setRemoteContentDescription(views, getString(R.string.app_name) + " " + homeTeam + " vs " + awayTeam);

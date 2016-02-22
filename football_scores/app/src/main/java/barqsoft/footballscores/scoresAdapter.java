@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,9 @@ import com.squareup.picasso.Picasso;
  * Created by yehya khaled on 2/26/2015.
  */
 public class scoresAdapter extends CursorAdapter {
+
+    private final String LOG_TAG = scoresAdapter.class.getSimpleName();
+
     public static final int COL_HOME = 3;
     public static final int COL_AWAY = 4;
     public static final int COL_HOME_GOALS = 6;
@@ -62,20 +66,26 @@ public class scoresAdapter extends CursorAdapter {
         String homeUrl = Utilies.getCrestUrl(context, cursor.getInt(COL_LEAGUE), cursor.getInt(COL_HOME_ID));
         String awayUrl = Utilies.getCrestUrl(context, cursor.getInt(COL_LEAGUE), cursor.getInt(COL_AWAY_ID));
 
+        Log.v(LOG_TAG, homeUrl + " " + awayUrl + " " + Utilies.getTeamCrestByTeamName(cursor.getString(COL_HOME)) + " " + cursor.getString(COL_HOME));
+
         if (Utilies.getTeamCrestByTeamName(cursor.getString(COL_HOME)) != R.drawable.no_icon) {
             mHolder.home_crest.setImageResource(Utilies.getTeamCrestByTeamName(
                             cursor.getString(COL_HOME)));
         } else {
-            Picasso.with(context).load(homeUrl).error(R.drawable.no_icon).into(mHolder.home_crest);
+            if (homeUrl != null && homeUrl.length() > 0) {
+                Picasso.with(context).load(homeUrl).error(R.drawable.no_icon).into(mHolder.home_crest);
+            }
+
         }
 
         if (Utilies.getTeamCrestByTeamName(cursor.getString(COL_AWAY)) != R.drawable.no_icon) {
             mHolder.away_crest.setImageResource(Utilies.getTeamCrestByTeamName(
                     cursor.getString(COL_AWAY)));
         } else {
-            Picasso.with(context).load(awayUrl).error(R.drawable.no_icon).into(mHolder.away_crest);
+            if (awayUrl.length() > 0 && awayUrl != null) {
+                Picasso.with(context).load(awayUrl).error(R.drawable.no_icon).into(mHolder.away_crest);
+            }
         }
-
 
         //Log.v(FetchScoreTask.LOG_TAG,mHolder.home_name.getText() + " Vs. " + mHolder.away_name.getText() +" id " + String.valueOf(mHolder.match_id));
         //Log.v(FetchScoreTask.LOG_TAG,String.valueOf(detail_match_id));

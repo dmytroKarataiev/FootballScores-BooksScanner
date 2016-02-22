@@ -48,6 +48,7 @@ public class myFetchService extends JobService {
 
     @Override
     public boolean onStartJob(JobParameters params) {
+
         getData("n2");
         getData("p2");
 
@@ -275,12 +276,17 @@ public class myFetchService extends JobService {
 
         try {
             URL fetch = new URL(fetchCrest.toString());
+            Log.v(LOG_TAG, fetch.toString());
+
             Request request = new Request.Builder()
                     .url(fetch)
                     .addHeader(API_PARAM, API_KEY)
                     .build();
             Response response = client.newCall(request).execute();
             JSON_data = response.body().string();
+
+            Log.v(LOG_TAG, JSON_data);
+
             response.body().close();
 
             final String TEAMS = "teams";
@@ -326,7 +332,7 @@ public class myFetchService extends JobService {
             Log.v(LOG_TAG, "Succesfully Inserted : " + String.valueOf(inserted_data));
 
         } catch (Exception e) {
-            Log.e(LOG_TAG, "Exception here" + e.getMessage());
+            Log.e(LOG_TAG, "Exception here " + e.getMessage());
         }
 
     }
@@ -343,7 +349,9 @@ public class myFetchService extends JobService {
                 .setColor(resources.getColor(R.color.green01))
                 .setSmallIcon(R.drawable.ic_stat_name)
                 .setContentTitle(getString(R.string.updated) + " " + info)
-                .setContentText(getString(R.string.updated_descr));
+                .setContentText(getString(R.string.updated_descr))
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(getString(R.string.updated_descr)))
+                .setAutoCancel(true);
 
         // Intent ti open the app
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);

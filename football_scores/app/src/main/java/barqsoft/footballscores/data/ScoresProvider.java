@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.util.Log;
 
 /**
  * Created by yehya khaled on 2/25/2015.
@@ -86,6 +87,7 @@ public class ScoresProvider extends ContentProvider {
 
     @Override
     public String getType(Uri uri) {
+        Log.v("LOG TAG", uri.toString());
         final int match = muriMatcher.match(uri);
         switch (match) {
             case MATCHES:
