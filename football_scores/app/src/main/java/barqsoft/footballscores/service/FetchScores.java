@@ -37,9 +37,9 @@ import barqsoft.footballscores.data.DatabaseContract;
 /**
  * Created by yehya khaled on 3/2/2015.
  */
-public class myFetchService extends JobService {
+public class FetchScores extends JobService {
 
-    public static final String LOG_TAG = "myFetchService";
+    public static final String LOG_TAG = FetchScores.class.getSimpleName();
     public static final String ACTION_DATA_UPDATE = "barqsoft.footballscores.app.ACTION_DATA_UPDATED";
 
     private static final int NOTIFICATION_ID = 3004;
@@ -67,23 +67,25 @@ public class myFetchService extends JobService {
 
                 getCrestUrl(league);
                 Log.v(LOG_TAG, "League: " + league + " ADDED");
-            } //else {
-               /* Cursor cursor = getApplicationContext().getContentResolver().query(DatabaseContract.teams_table.CONTENT_URI,
+            } else {
+               Cursor cursor1 = getApplicationContext().getContentResolver().query(DatabaseContract.teams_table.CONTENT_URI,
                         null,
                         DatabaseContract.teams_table.COL_LEAGUE_ID + " = ?",
                         new String[]{league},
                         null);
-                cursor.moveToFirst();
+                cursor1.moveToFirst();
 
-                int INDEX_TEAM_NAME = cursor.getColumnIndex(DatabaseContract.teams_table.COL_TEAM_FULLNAME);
-                int INDEX_LEAGUE_ID = cursor.getColumnIndex(DatabaseContract.teams_table.COL_LEAGUE_ID);
+                int INDEX_TEAM_NAME = cursor1.getColumnIndex(DatabaseContract.teams_table.COL_TEAM_FULLNAME);
+                int INDEX_LEAGUE_ID = cursor1.getColumnIndex(DatabaseContract.teams_table.COL_LEAGUE_ID);
 
-                while (!cursor.isLast()) {
-                    Log.v(LOG_TAG, cursor.getString(INDEX_TEAM_NAME) + " " + cursor.getInt(INDEX_LEAGUE_ID));
-                    cursor.moveToNext();
-                }*/
-            //Log.v(LOG_TAG, "League: " + league +" NOT FETCHED, ALREADY IN THE BASE");
-            // }
+                while (!cursor1.isLast()) {
+                    Log.v(LOG_TAG, cursor1.getString(INDEX_TEAM_NAME) + " " + cursor1.getInt(INDEX_LEAGUE_ID));
+                    cursor1.moveToNext();
+                }
+                Log.v(LOG_TAG, "League: " + league +" NOT FETCHED, ALREADY IN THE BASE");
+                cursor1.close();
+            }
+
             if (cursor != null) {
                 cursor.close();
             }
@@ -262,78 +264,8 @@ public class myFetchService extends JobService {
      */
     private void getCrestUrl(String leagueId) {
 
-        final String API_PARAM = "X-Auth-Token";
-        final String API_KEY = BuildConfig.FOOTBALL_API_KEY;
-        String jsonUrl = "http://api.football-data.org/alpha/soccerseasons/" + leagueId + "/teams";
-
-        Uri fetchCrest = Uri.parse(jsonUrl)
-                .buildUpon()
-                .build();
-
-        String JSON_data = null;
-
-        OkHttpClient client = new OkHttpClient();
-
-        try {
-            URL fetch = new URL(fetchCrest.toString());
-            Log.v(LOG_TAG, fetch.toString());
-
-            Request request = new Request.Builder()
-                    .url(fetch)
-                    .addHeader(API_PARAM, API_KEY)
-                    .build();
-            Response response = client.newCall(request).execute();
-            JSON_data = response.body().string();
-
-            Log.v(LOG_TAG, JSON_data);
-
-            response.body().close();
-
-            final String TEAMS = "teams";
-
-            // For each team
-            final String FULLNAME = "name";
-            final String NAME = "shortName";
-            final String CREST_URL = "crestUrl";
-            final String LINKS = "_links";
-            final String SELF = "self";
-            final String HREF = "href";
-            final String TEAM_LINK = "http://api.football-data.org/alpha/teams/";
-
-            JSONArray teams = new JSONObject(JSON_data).getJSONArray(TEAMS);
-
-            Vector<ContentValues> values = new Vector<>(teams.length());
-            for (int i = 0, n = teams.length(); i < n; i++) {
-                JSONObject team = teams.getJSONObject(i);
-
-                String fullName = team.getString(FULLNAME);
-                String name = team.getString(NAME);
-                String url = team.getString(CREST_URL);
-                String teamId = team.getJSONObject(LINKS).getJSONObject(SELF).getString(HREF);
-                teamId = teamId.replace(TEAM_LINK, "");
-
-                ContentValues team_values = new ContentValues();
-                team_values.put(DatabaseContract.teams_table.COL_TEAM_ID, teamId);
-                team_values.put(DatabaseContract.teams_table.COL_TEAM_FULLNAME, fullName);
-                team_values.put(DatabaseContract.teams_table.COL_TEAM_NAME, name);
-                team_values.put(DatabaseContract.teams_table.COL_TEAM_CREST_PATH, url);
-                team_values.put(DatabaseContract.teams_table.COL_LEAGUE_ID, leagueId);
-
-                values.add(team_values);
-
-            }
-
-            int inserted_data = 0;
-            ContentValues[] insert_data = new ContentValues[values.size()];
-            values.toArray(insert_data);
-            inserted_data = getApplicationContext().getContentResolver().bulkInsert(
-                    DatabaseContract.teams_table.CONTENT_URI, insert_data);
-
-            Log.v(LOG_TAG, "Succesfully Inserted : " + String.valueOf(inserted_data));
-
-        } catch (Exception e) {
-            Log.e(LOG_TAG, "Exception here " + e.getMessage());
-        }
+        FetchCrests myFetchService = new FetchCrests();
+        myFetchService.execute(leagueId);
 
     }
 
@@ -431,6 +363,90 @@ public class myFetchService extends JobService {
                 }
             } catch (Exception e) {
                 Log.e(LOG_TAG, e.getMessage());
+            }
+
+            return null;
+        }
+    }
+
+    private class FetchCrests extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... params) {
+
+            String leagueId = params[0];
+
+            final String API_PARAM = "X-Auth-Token";
+            final String API_KEY = BuildConfig.FOOTBALL_API_KEY;
+            String jsonUrl = "http://api.football-data.org/alpha/soccerseasons/" + leagueId + "/teams";
+
+            Uri fetchCrest = Uri.parse(jsonUrl)
+                    .buildUpon()
+                    .build();
+
+            String JSON_data = null;
+
+            OkHttpClient client = new OkHttpClient();
+
+            try {
+                URL fetch = new URL(fetchCrest.toString());
+                // Log.v(LOG_TAG, fetch.toString());
+
+                Request request = new Request.Builder()
+                        .url(fetch)
+                        .addHeader(API_PARAM, API_KEY)
+                        .build();
+                Response response = client.newCall(request).execute();
+                JSON_data = response.body().string();
+
+                // Log.v(LOG_TAG, JSON_data);
+
+                response.body().close();
+
+                final String TEAMS = "teams";
+
+                // For each team
+                final String FULLNAME = "name";
+                final String NAME = "shortName";
+                final String CREST_URL = "crestUrl";
+                final String LINKS = "_links";
+                final String SELF = "self";
+                final String HREF = "href";
+                final String TEAM_LINK = "http://api.football-data.org/alpha/teams/";
+
+                JSONArray teams = new JSONObject(JSON_data).getJSONArray(TEAMS);
+
+                Vector<ContentValues> values = new Vector<>(teams.length());
+                for (int i = 0, n = teams.length(); i < n; i++) {
+                    JSONObject team = teams.getJSONObject(i);
+
+                    String fullName = team.getString(FULLNAME);
+                    String name = team.getString(NAME);
+                    String url = team.getString(CREST_URL);
+                    String teamId = team.getJSONObject(LINKS).getJSONObject(SELF).getString(HREF);
+                    teamId = teamId.replace(TEAM_LINK, "");
+
+                    ContentValues team_values = new ContentValues();
+                    team_values.put(DatabaseContract.teams_table.COL_TEAM_ID, teamId);
+                    team_values.put(DatabaseContract.teams_table.COL_TEAM_FULLNAME, fullName);
+                    team_values.put(DatabaseContract.teams_table.COL_TEAM_NAME, name);
+                    team_values.put(DatabaseContract.teams_table.COL_TEAM_CREST_PATH, url);
+                    team_values.put(DatabaseContract.teams_table.COL_LEAGUE_ID, leagueId);
+
+                    values.add(team_values);
+
+                }
+
+                int inserted_data = 0;
+                ContentValues[] insert_data = new ContentValues[values.size()];
+                values.toArray(insert_data);
+                inserted_data = getApplicationContext().getContentResolver().bulkInsert(
+                        DatabaseContract.teams_table.CONTENT_URI, insert_data);
+
+                Log.v(LOG_TAG, "Succesfully Inserted : " + String.valueOf(inserted_data));
+
+            } catch (Exception e) {
+                Log.e(LOG_TAG, "Exception here " + e.getMessage());
             }
 
             return null;

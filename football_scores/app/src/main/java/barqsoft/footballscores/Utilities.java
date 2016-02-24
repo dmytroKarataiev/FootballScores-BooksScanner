@@ -2,13 +2,17 @@ package barqsoft.footballscores;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import barqsoft.footballscores.data.DatabaseContract;
 
 /**
  * Created by yehya khaled on 3/3/2015.
  */
-public class Utilies {
+public class Utilities {
+
+    private final static String LOG_TAG = Utilities.class.getSimpleName();
+
     public static final int BUNDESLIGA_1 = 394;
     public static final int BUNDESLIGA_2 = 395;
     public static final int LIGUE_1 = 396;
@@ -84,6 +88,9 @@ public class Utilies {
         if (teamname == null) {
             return R.drawable.no_icon;
         }
+
+        Log.v(LOG_TAG, teamname);
+
         switch (teamname) { //This is the set of icons that are currently in the app. Feel free to find and add more
             //as you go.
             case "Arsenal London FC":
@@ -106,6 +113,10 @@ public class Utilies {
                 return R.drawable.sunderland;
             case "Stoke City FC":
                 return R.drawable.stoke_city;
+            case "Bayer Leverkusen":
+                return R.drawable.bayer;
+            case "Borussia Dortmund":
+                return R.drawable.borussia;
             default:
                 return R.drawable.no_icon;
         }
@@ -128,7 +139,6 @@ public class Utilies {
                         null,
                         new String[]{Integer.toString(leagueId), Integer.toString(teamId)},
                         null);
-
 
         if (cursor1 != null && cursor1.moveToFirst()) {
             int INDEX_URL = cursor1.getColumnIndex(DatabaseContract.teams_table.COL_TEAM_CREST_PATH);

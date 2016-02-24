@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 import barqsoft.footballscores.R;
-import barqsoft.footballscores.Utilies;
+import barqsoft.footballscores.Utilities;
 import barqsoft.footballscores.data.DatabaseContract;
 
 /**
@@ -103,7 +103,7 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
                 Context context = getApplicationContext();
 
                 Bitmap homeCrestBitmap = null;
-                String homeUrl = Utilies.getCrestUrl(context, data.getInt(COL_LEAGUE), data.getInt(COL_HOME_ID));
+                String homeUrl = Utilities.getCrestUrl(context, data.getInt(COL_LEAGUE), data.getInt(COL_HOME_ID));
                 try {
                     if (!homeUrl.contains("svg")) {
                         homeCrestBitmap = Glide.with(DetailWidgetRemoteViewsService.this)
@@ -121,7 +121,7 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
 
 
                 Bitmap awayCrestBitmap = null;
-                String awayUrl = Utilies.getCrestUrl(context, data.getInt(COL_LEAGUE), data.getInt(COL_AWAY_ID));
+                String awayUrl = Utilities.getCrestUrl(context, data.getInt(COL_LEAGUE), data.getInt(COL_AWAY_ID));
                 try {
                     if (!awayUrl.contains("svg")) {
                         awayCrestBitmap = Glide.with(DetailWidgetRemoteViewsService.this)
@@ -138,8 +138,8 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
                 }
 
                 String date = data.getString(COL_DATE);
-                String league = Utilies.getLeague(data.getInt(COL_LEAGUE));
-                String scores = Utilies.getScores(data.getInt(COL_HOME_GOALS), data.getInt(COL_AWAY_GOALS));
+                String league = Utilities.getLeague(data.getInt(COL_LEAGUE));
+                String scores = Utilities.getScores(data.getInt(COL_HOME_GOALS), data.getInt(COL_AWAY_GOALS));
                 String homeTeam = data.getString(COL_HOME);
                 String awayTeam = data.getString(COL_AWAY);
 

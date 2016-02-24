@@ -14,7 +14,7 @@ import android.widget.RemoteViews;
 
 import barqsoft.footballscores.MainActivity;
 import barqsoft.footballscores.R;
-import barqsoft.footballscores.service.myFetchService;
+import barqsoft.footballscores.service.FetchScores;
 
 /**
  * Provider for a scrollable detail widget
@@ -76,7 +76,7 @@ public class DetailWidgetProvider extends AppWidgetProvider {
     public void onReceive(@NonNull Context context, @NonNull Intent intent) {
         super.onReceive(context, intent);
 
-        if (myFetchService.ACTION_DATA_UPDATE.equals(intent.getAction())) {
+        if (FetchScores.ACTION_DATA_UPDATE.equals(intent.getAction())) {
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
                     new ComponentName(context, getClass()));

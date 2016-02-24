@@ -79,7 +79,7 @@ ADDED from AndroidManifest.xml:36:13
 		ADDED from AndroidManifest.xml:38:17
 	android:name
 		ADDED from AndroidManifest.xml:37:17
-service#barqsoft.footballscores.service.myFetchService
+service#barqsoft.footballscores.service.FetchScores
 ADDED from AndroidManifest.xml:41:9
 	android:exported
 		ADDED from AndroidManifest.xml:44:13

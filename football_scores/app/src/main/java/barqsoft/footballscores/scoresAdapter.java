@@ -16,9 +16,9 @@ import com.squareup.picasso.Picasso;
 /**
  * Created by yehya khaled on 2/26/2015.
  */
-public class scoresAdapter extends CursorAdapter {
+public class ScoresAdapter extends CursorAdapter {
 
-    private final String LOG_TAG = scoresAdapter.class.getSimpleName();
+    private final String LOG_TAG = ScoresAdapter.class.getSimpleName();
 
     public static final int COL_HOME = 3;
     public static final int COL_AWAY = 4;
@@ -37,7 +37,7 @@ public class scoresAdapter extends CursorAdapter {
     public double detail_match_id = 0;
     private String FOOTBALL_SCORES_HASHTAG = "#Football_Scores";
 
-    public scoresAdapter(Context context, Cursor cursor, int flags) {
+    public ScoresAdapter(Context context, Cursor cursor, int flags) {
         super(context, cursor, flags);
     }
 
@@ -58,19 +58,18 @@ public class scoresAdapter extends CursorAdapter {
         mHolder.home_name.setText(cursor.getString(COL_HOME));
         mHolder.away_name.setText(cursor.getString(COL_AWAY));
         mHolder.date.setText(cursor.getString(COL_MATCHTIME));
-        mHolder.score.setText(Utilies.getScores(cursor.getInt(COL_HOME_GOALS), cursor.getInt(COL_AWAY_GOALS)));
+        mHolder.score.setText(Utilities.getScores(cursor.getInt(COL_HOME_GOALS), cursor.getInt(COL_AWAY_GOALS)));
         mHolder.match_id = cursor.getDouble(COL_ID);
 
         // Tried to supply image urls from API, but 99% of images are SVGs there
         // That is why some crests are local, some png will be from urls, majority without images
-        String homeUrl = Utilies.getCrestUrl(context, cursor.getInt(COL_LEAGUE), cursor.getInt(COL_HOME_ID));
-        String awayUrl = Utilies.getCrestUrl(context, cursor.getInt(COL_LEAGUE), cursor.getInt(COL_AWAY_ID));
+        String homeUrl = Utilities.getCrestUrl(context, cursor.getInt(COL_LEAGUE), cursor.getInt(COL_HOME_ID));
+        String awayUrl = Utilities.getCrestUrl(context, cursor.getInt(COL_LEAGUE), cursor.getInt(COL_AWAY_ID));
 
-        Log.v(LOG_TAG, homeUrl + " " + awayUrl + " " + Utilies.getTeamCrestByTeamName(cursor.getString(COL_HOME)) + " " + cursor.getString(COL_HOME));
+        Log.v(LOG_TAG, homeUrl + " " + awayUrl + " " + Utilities.getTeamCrestByTeamName(cursor.getString(COL_HOME)) + " " + cursor.getString(COL_HOME));
 
-        if (Utilies.getTeamCrestByTeamName(cursor.getString(COL_HOME)) != R.drawable.no_icon) {
-            mHolder.home_crest.setImageResource(Utilies.getTeamCrestByTeamName(
-                            cursor.getString(COL_HOME)));
+        if (Utilities.getTeamCrestByTeamName(cursor.getString(COL_HOME)) != R.drawable.no_icon) {
+            mHolder.home_crest.setImageResource(Utilities.getTeamCrestByTeamName(cursor.getString(COL_HOME)));
         } else {
             if (homeUrl != null && homeUrl.length() > 0) {
                 Picasso.with(context).load(homeUrl).error(R.drawable.no_icon).into(mHolder.home_crest);
@@ -78,9 +77,8 @@ public class scoresAdapter extends CursorAdapter {
 
         }
 
-        if (Utilies.getTeamCrestByTeamName(cursor.getString(COL_AWAY)) != R.drawable.no_icon) {
-            mHolder.away_crest.setImageResource(Utilies.getTeamCrestByTeamName(
-                    cursor.getString(COL_AWAY)));
+        if (Utilities.getTeamCrestByTeamName(cursor.getString(COL_AWAY)) != R.drawable.no_icon) {
+            mHolder.away_crest.setImageResource(Utilities.getTeamCrestByTeamName(cursor.getString(COL_AWAY)));
         } else {
             if (awayUrl.length() > 0 && awayUrl != null) {
                 Picasso.with(context).load(awayUrl).error(R.drawable.no_icon).into(mHolder.away_crest);
@@ -100,10 +98,10 @@ public class scoresAdapter extends CursorAdapter {
             container.addView(v, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
             TextView match_day = (TextView) v.findViewById(R.id.matchday_textview);
-            match_day.setText(Utilies.getMatchDay(cursor.getInt(COL_MATCHDAY), cursor.getInt(COL_LEAGUE)));
+            match_day.setText(Utilities.getMatchDay(cursor.getInt(COL_MATCHDAY), cursor.getInt(COL_LEAGUE)));
 
             TextView league = (TextView) v.findViewById(R.id.league_textview);
-            league.setText(Utilies.getLeague(cursor.getInt(COL_LEAGUE)));
+            league.setText(Utilities.getLeague(cursor.getInt(COL_LEAGUE)));
 
             Button share_button = (Button) v.findViewById(R.id.share_button);
             share_button.setContentDescription(context.getString(R.string.share_text));
