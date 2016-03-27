@@ -32,8 +32,6 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
     public final String LOG_TAG = DetailWidgetRemoteViewsService.class.getSimpleName();
 
     // these indices must match the projection
-
-
     public static final int COL_DATE = 1;
     public static final int COL_MATCHTIME = 2;
     public static final int COL_HOME = 3;
@@ -105,7 +103,7 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
                 Bitmap homeCrestBitmap = null;
                 String homeUrl = Utilities.getCrestUrl(context, data.getInt(COL_LEAGUE), data.getInt(COL_HOME_ID));
                 try {
-                    if (!homeUrl.contains("svg")) {
+                    if (homeUrl != null && (homeUrl.length() > 0 || !homeUrl.contains("svg"))) {
                         homeCrestBitmap = Glide.with(DetailWidgetRemoteViewsService.this)
                                 .load(homeUrl)
                                 .asBitmap()
@@ -123,7 +121,7 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
                 Bitmap awayCrestBitmap = null;
                 String awayUrl = Utilities.getCrestUrl(context, data.getInt(COL_LEAGUE), data.getInt(COL_AWAY_ID));
                 try {
-                    if (!awayUrl.contains("svg")) {
+                    if (awayUrl != null && (awayUrl.length() > 0 || !awayUrl.contains("svg"))) {
                         awayCrestBitmap = Glide.with(DetailWidgetRemoteViewsService.this)
                                 .load(awayUrl)
                                 .asBitmap()

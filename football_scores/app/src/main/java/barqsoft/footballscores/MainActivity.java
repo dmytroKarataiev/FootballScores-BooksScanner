@@ -1,11 +1,17 @@
 package barqsoft.footballscores;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import barqsoft.footballscores.service.FetchScores;
 
 public class MainActivity extends ActionBarActivity
 {
@@ -43,11 +49,22 @@ public class MainActivity extends ActionBarActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_about)
-        {
-            Intent start_about = new Intent(this,AboutActivity.class);
-            startActivity(start_about);
-            return true;
+
+        switch (id) {
+            case R.id.action_about:
+                Intent start_about = new Intent(this,AboutActivity.class);
+                startActivity(start_about);
+                return true;
+            case R.id.action_refresh:
+                int JOB_ID = 123;
+                ComponentName serviceName = new ComponentName(this, FetchScores.class);
+                JobInfo jobInfo = new JobInfo.Builder(JOB_ID, serviceName)
+                        .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                        .build();
+                JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+                int result = scheduler.schedule(jobInfo);
+                if (result == JobScheduler.RESULT_SUCCESS) Log.v("LOG_TAG", "Job scheduled successfully!");
+                break;
         }
 
         return super.onOptionsItemSelected(item);

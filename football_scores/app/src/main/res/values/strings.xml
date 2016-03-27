@@ -39,5 +39,7 @@
     <string name="updated">New matches: </string>
     <string name="updated_descr">Press on notification to see more details</string>
 
+    <!-- Menu -->
+    <string name="refresh">Refresh</string>
 
 </resources>
