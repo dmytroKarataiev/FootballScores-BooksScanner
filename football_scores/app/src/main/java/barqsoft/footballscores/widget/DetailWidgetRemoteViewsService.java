@@ -103,12 +103,22 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
                 Bitmap homeCrestBitmap = null;
                 String homeUrl = Utilities.getCrestUrl(context, data.getInt(COL_LEAGUE), data.getInt(COL_HOME_ID));
                 try {
-                    if (homeUrl != null && (homeUrl.length() > 0 || !homeUrl.contains("svg"))) {
-                        homeCrestBitmap = Glide.with(DetailWidgetRemoteViewsService.this)
-                                .load(homeUrl)
-                                .asBitmap()
-                                .error(R.drawable.no_icon)
-                                .into(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL, com.bumptech.glide.request.target.Target.SIZE_ORIGINAL).get();
+                    if (homeUrl != null && homeUrl.length() > 0) {
+                        {
+                            if (!homeUrl.contains("svg")) {
+                                homeCrestBitmap = Glide.with(DetailWidgetRemoteViewsService.this)
+                                        .load(homeUrl)
+                                        .asBitmap()
+                                        .error(R.drawable.no_icon)
+                                        .into(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL, com.bumptech.glide.request.target.Target.SIZE_ORIGINAL).get();
+                            } else {
+                                homeCrestBitmap = Glide.with(DetailWidgetRemoteViewsService.this)
+                                        .load(Utilities.fixUrlIfSvg(homeUrl))
+                                        .asBitmap()
+                                        .error(R.drawable.no_icon)
+                                        .into(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL, com.bumptech.glide.request.target.Target.SIZE_ORIGINAL).get();
+                            }
+                        }
                         views.setImageViewBitmap(R.id.home_crest, homeCrestBitmap);
                     } else {
                         views.setImageViewResource(R.id.home_crest, R.drawable.no_icon);
@@ -117,16 +127,24 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
                     Log.e(LOG_TAG, "Error retrieving large icon from " + homeUrl, e);
                 }
 
-
                 Bitmap awayCrestBitmap = null;
                 String awayUrl = Utilities.getCrestUrl(context, data.getInt(COL_LEAGUE), data.getInt(COL_AWAY_ID));
                 try {
-                    if (awayUrl != null && (awayUrl.length() > 0 || !awayUrl.contains("svg"))) {
-                        awayCrestBitmap = Glide.with(DetailWidgetRemoteViewsService.this)
-                                .load(awayUrl)
-                                .asBitmap()
-                                .error(R.drawable.no_icon)
-                                .into(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL, com.bumptech.glide.request.target.Target.SIZE_ORIGINAL).get();
+                    if (awayUrl != null && awayUrl.length() > 0) {
+
+                        if (!awayUrl.contains("svg")) {
+                            awayCrestBitmap = Glide.with(DetailWidgetRemoteViewsService.this)
+                                    .load(awayUrl)
+                                    .asBitmap()
+                                    .error(R.drawable.no_icon)
+                                    .into(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL, com.bumptech.glide.request.target.Target.SIZE_ORIGINAL).get();
+                        } else {
+                            awayCrestBitmap = Glide.with(DetailWidgetRemoteViewsService.this)
+                                    .load(Utilities.fixUrlIfSvg(awayUrl))
+                                    .asBitmap()
+                                    .error(R.drawable.no_icon)
+                                    .into(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL, com.bumptech.glide.request.target.Target.SIZE_ORIGINAL).get();
+                        }
                         views.setImageViewBitmap(R.id.away_crest, awayCrestBitmap);
                     } else {
                         views.setImageViewResource(R.id.away_crest, R.drawable.no_icon);

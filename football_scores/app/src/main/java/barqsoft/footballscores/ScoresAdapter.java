@@ -72,7 +72,12 @@ public class ScoresAdapter extends CursorAdapter {
             mHolder.home_crest.setImageResource(Utilities.getTeamCrestByTeamName(cursor.getString(COL_HOME)));
         } else {
             if (homeUrl != null && homeUrl.length() > 0) {
-                Picasso.with(context).load(homeUrl).error(R.drawable.no_icon).into(mHolder.home_crest);
+                if (!homeUrl.contains("svg")) {
+                    Picasso.with(context).load(homeUrl).error(R.drawable.no_icon).into(mHolder.home_crest);
+                } else {
+                    Log.d("ScoresAdapter", homeUrl + " " + Utilities.fixUrlIfSvg(homeUrl));
+                    Picasso.with(context).load(Utilities.fixUrlIfSvg(homeUrl)).error(R.drawable.no_icon).into(mHolder.home_crest);
+                }
             }
 
         }
@@ -80,8 +85,13 @@ public class ScoresAdapter extends CursorAdapter {
         if (Utilities.getTeamCrestByTeamName(cursor.getString(COL_AWAY)) != R.drawable.no_icon) {
             mHolder.away_crest.setImageResource(Utilities.getTeamCrestByTeamName(cursor.getString(COL_AWAY)));
         } else {
-            if (awayUrl.length() > 0 && awayUrl != null) {
-                Picasso.with(context).load(awayUrl).error(R.drawable.no_icon).into(mHolder.away_crest);
+            if (awayUrl != null && awayUrl.length() > 0) {
+                if (!awayUrl.contains("svg")) {
+                    Picasso.with(context).load(awayUrl).error(R.drawable.no_icon).into(mHolder.away_crest);
+                } else {
+                    Log.d("ScoresAdapter", awayUrl + " " + Utilities.fixUrlIfSvg(awayUrl));
+                    Picasso.with(context).load(Utilities.fixUrlIfSvg(awayUrl)).error(R.drawable.no_icon).into(mHolder.away_crest);
+                }
             }
         }
 

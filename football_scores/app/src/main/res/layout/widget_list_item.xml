@@ -4,7 +4,7 @@
     android:id="@+id/widget_list_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/list_item"
+    android:background="@color/whiteTransparent"
     android:elevation="@dimen/elevation"
     android:orientation="vertical">
 
@@ -26,8 +26,7 @@
                 android:id="@+id/home_crest"
                 android:layout_width="@dimen/list_image_size"
                 android:layout_height="@dimen/list_image_size"
-                android:layout_gravity="center"
-                android:src="@drawable/no_icon" />
+                android:layout_gravity="center" />
 
             <TextView
                 android:id="@+id/home_name"
@@ -35,7 +34,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="@string/test_text"
                 android:textAppearance="?android:textAppearance"
                 android:textColor="@color/black"
                 android:textSize="@dimen/TeamNames" />
@@ -54,7 +52,6 @@
                 android:layout_gravity="center"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/test_text"
                 android:textAppearance="?android:textAppearance"
                 android:textColor="@color/black"
                 android:textSize="@dimen/Score" />
@@ -66,7 +63,6 @@
                 android:layout_gravity="center"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/test_text"
                 android:textAppearance="?android:textAppearance"
                 android:textColor="@color/black" />
 
@@ -83,8 +79,7 @@
                 android:id="@+id/away_crest"
                 android:layout_width="@dimen/list_image_size"
                 android:layout_height="@dimen/list_image_size"
-                android:layout_gravity="center"
-                android:src="@drawable/no_icon" />
+                android:layout_gravity="center" />
 
             <TextView
                 android:id="@+id/away_name"
@@ -92,7 +87,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="@string/test_text"
                 android:textAppearance="?android:textAppearance"
                 android:textColor="@color/black"
                 android:textSize="@dimen/TeamNames" />

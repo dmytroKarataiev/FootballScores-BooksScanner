@@ -156,4 +156,25 @@ public class Utilities {
 
     }
 
+    /**
+     * Conversion documented at https://meta.wikimedia.org/wiki/SVG_image_support
+     * Borrowed this ingenious method from rahall4405 gitHub
+     * @param UrlString initial wikipedia url to svg image
+     * @return fixed link to the png version of the image
+     */
+    public static String fixUrlIfSvg(String UrlString) {
+        String svgName = UrlString.substring(UrlString.lastIndexOf("/")+ 1, UrlString.length());
+        int toEndWikipediaInt = UrlString.indexOf("wikipedia/") + 10;
+
+        String toEndWikipedia = UrlString.substring(0,toEndWikipediaInt);
+        String fromEndWikipedia = UrlString.substring(toEndWikipediaInt);
+
+        String toStartThumb = fromEndWikipedia.substring(0, fromEndWikipedia.indexOf("/"));
+        String partAfterThumb = fromEndWikipedia.substring(fromEndWikipedia.indexOf("/"), fromEndWikipedia.length());
+        // 144px was the max size in our  samples,  we will use this
+        String lastPart = "/144px-" + svgName + ".png";
+        return toEndWikipedia + toStartThumb + "/thumb" + partAfterThumb + lastPart;
+
+    }
+
 }
