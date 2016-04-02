@@ -13,11 +13,11 @@ import android.widget.AdapterView;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
-import com.bumptech.glide.Glide;
+import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.concurrent.ExecutionException;
 
 import barqsoft.footballscores.R;
 import barqsoft.footballscores.Utilities;
@@ -46,12 +46,14 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
 
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
+
         return new RemoteViewsFactory() {
             private Cursor data = null;
 
             @Override
             public void onCreate() {
                 // Nothing to do
+
             }
 
             @Override
@@ -91,67 +93,14 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
             }
 
             @Override
-            public RemoteViews getViewAt(int position) {
+            public RemoteViews getViewAt(final int position) {
                 if (position == AdapterView.INVALID_POSITION || data == null || !data.moveToPosition(position)) {
                     return null;
                 }
 
-                RemoteViews views = new RemoteViews(getPackageName(), R.layout.widget_list_item);
+                final RemoteViews views = new RemoteViews(getPackageName(), R.layout.widget_list_item);
 
-                Context context = getApplicationContext();
-
-                Bitmap homeCrestBitmap = null;
-                String homeUrl = Utilities.getCrestUrl(context, data.getInt(COL_LEAGUE), data.getInt(COL_HOME_ID));
-                try {
-                    if (homeUrl != null && homeUrl.length() > 0) {
-                        {
-                            if (!homeUrl.contains("svg")) {
-                                homeCrestBitmap = Glide.with(DetailWidgetRemoteViewsService.this)
-                                        .load(homeUrl)
-                                        .asBitmap()
-                                        .error(R.drawable.no_icon)
-                                        .into(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL, com.bumptech.glide.request.target.Target.SIZE_ORIGINAL).get();
-                            } else {
-                                homeCrestBitmap = Glide.with(DetailWidgetRemoteViewsService.this)
-                                        .load(Utilities.fixUrlIfSvg(homeUrl))
-                                        .asBitmap()
-                                        .error(R.drawable.no_icon)
-                                        .into(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL, com.bumptech.glide.request.target.Target.SIZE_ORIGINAL).get();
-                            }
-                        }
-                        views.setImageViewBitmap(R.id.home_crest, homeCrestBitmap);
-                    } else {
-                        views.setImageViewResource(R.id.home_crest, R.drawable.no_icon);
-                    }
-                } catch (InterruptedException | ExecutionException e) {
-                    Log.e(LOG_TAG, "Error retrieving large icon from " + homeUrl, e);
-                }
-
-                Bitmap awayCrestBitmap = null;
-                String awayUrl = Utilities.getCrestUrl(context, data.getInt(COL_LEAGUE), data.getInt(COL_AWAY_ID));
-                try {
-                    if (awayUrl != null && awayUrl.length() > 0) {
-
-                        if (!awayUrl.contains("svg")) {
-                            awayCrestBitmap = Glide.with(DetailWidgetRemoteViewsService.this)
-                                    .load(awayUrl)
-                                    .asBitmap()
-                                    .error(R.drawable.no_icon)
-                                    .into(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL, com.bumptech.glide.request.target.Target.SIZE_ORIGINAL).get();
-                        } else {
-                            awayCrestBitmap = Glide.with(DetailWidgetRemoteViewsService.this)
-                                    .load(Utilities.fixUrlIfSvg(awayUrl))
-                                    .asBitmap()
-                                    .error(R.drawable.no_icon)
-                                    .into(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL, com.bumptech.glide.request.target.Target.SIZE_ORIGINAL).get();
-                        }
-                        views.setImageViewBitmap(R.id.away_crest, awayCrestBitmap);
-                    } else {
-                        views.setImageViewResource(R.id.away_crest, R.drawable.no_icon);
-                    }
-                } catch (InterruptedException | ExecutionException e) {
-                    Log.e(LOG_TAG, "Error retrieving large icon from " + homeUrl, e);
-                }
+                final Context context = getApplicationContext();
 
                 String date = data.getString(COL_DATE);
                 String league = Utilities.getLeague(data.getInt(COL_LEAGUE));
@@ -171,6 +120,40 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
                 views.setTextViewText(R.id.league_textview, league);
                 views.setTextViewText(R.id.home_name, homeTeam);
                 views.setTextViewText(R.id.away_name, awayTeam);
+
+                String homeUrl = Utilities.getCrestUrl(context, data.getInt(COL_LEAGUE), data.getInt(COL_HOME_ID));
+                if (homeUrl != null && homeUrl.length() > 0) {
+                    if (homeUrl.contains("svg")) {
+                        homeUrl = Utilities.fixUrlIfSvg(homeUrl);
+                    }
+                    Bitmap bitmap = null;
+                    try {
+                        bitmap = Picasso.with(context).load(homeUrl).get();
+                    } catch (IOException e) {
+                        Log.e(LOG_TAG, "e:" + e);
+                    }
+
+                    views.setImageViewBitmap(R.id.home_crest, bitmap);
+                } else {
+                    views.setImageViewResource(R.id.home_crest, R.drawable.no_icon);
+                }
+
+                String awayUrl = Utilities.getCrestUrl(context, data.getInt(COL_LEAGUE), data.getInt(COL_AWAY_ID));
+                if (awayUrl != null && awayUrl.length() > 0) {
+                    if (awayUrl.contains("svg")) {
+                        awayUrl = Utilities.fixUrlIfSvg(awayUrl);
+                    }
+
+                    Bitmap bitmap = null;
+                    try {
+                        bitmap = Picasso.with(context).load(awayUrl).get();
+                    } catch (IOException e) {
+                        Log.e(LOG_TAG, "e:" + e);
+                    }
+                    views.setImageViewBitmap(R.id.away_crest, bitmap);
+                } else {
+                    views.setImageViewResource(R.id.away_crest, R.drawable.no_icon);
+                }
 
                 final Intent fillInIntent = new Intent();
 
