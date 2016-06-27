@@ -1,3 +1,27 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2016. Dmytro Karataiev
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package barqsoft.footballscores.widget;
 
 import android.annotation.TargetApi;
@@ -20,7 +44,7 @@ import barqsoft.footballscores.service.FetchScores;
  * Provider for a scrollable detail widget
  */
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-public class DetailWidgetProvider extends AppWidgetProvider {
+public class WidgetProvider extends AppWidgetProvider {
 
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         // Perform this loop procedure for each App Widget that belongs to this provider
@@ -34,9 +58,9 @@ public class DetailWidgetProvider extends AppWidgetProvider {
 
             // Set up the collection
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                setRemoteAdapter(context, views, appWidgetId);
+                setRemoteAdapter(context, views);
             } else {
-                setRemoteAdapterV11(context, views, appWidgetId);
+                setRemoteAdapterV11(context, views);
             }
 
             Intent clickIntentTemplate = new Intent(context, MainActivity.class);
@@ -57,11 +81,9 @@ public class DetailWidgetProvider extends AppWidgetProvider {
      * @param views RemoteViews to set the RemoteAdapter
      */
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    private void setRemoteAdapter(Context context, @NonNull final RemoteViews views, int appWidgetId) {
+    private void setRemoteAdapter(Context context, @NonNull final RemoteViews views) {
 
-        Intent intent = new Intent(context, DetailWidgetRemoteViewsService.class);
-        intent.putExtra("id", appWidgetId);
-
+        Intent intent = new Intent(context, WidgetService.class);
         views.setRemoteAdapter(R.id.widget_list, intent);
     }
 
@@ -71,11 +93,9 @@ public class DetailWidgetProvider extends AppWidgetProvider {
      * @param views RemoteViews to set the RemoteAdapter
      */
     @SuppressWarnings("deprecation")
-    private void setRemoteAdapterV11(Context context, @NonNull final RemoteViews views, int appWidgetId) {
+    private void setRemoteAdapterV11(Context context, @NonNull final RemoteViews views) {
 
-        Intent intent = new Intent(context, DetailWidgetRemoteViewsService.class);
-        intent.putExtra("id", appWidgetId);
-
+        Intent intent = new Intent(context, WidgetService.class);
         views.setRemoteAdapter(0, R.id.widget_list,intent);
     }
 

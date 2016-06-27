@@ -1,3 +1,27 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2016. Dmytro Karataiev
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package barqsoft.footballscores.widget;
 
 import android.annotation.TargetApi;
@@ -27,9 +51,9 @@ import barqsoft.footballscores.data.DatabaseContract;
  * RemoteViewsService controlling the data being shown in the scrollable detail widget
  */
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-public class DetailWidgetRemoteViewsService extends RemoteViewsService {
+public class WidgetService extends RemoteViewsService {
 
-    public final String LOG_TAG = DetailWidgetRemoteViewsService.class.getSimpleName();
+    public final String LOG_TAG = WidgetService.class.getSimpleName();
 
     // these indices must match the projection
     public static final int COL_DATE = 1;
@@ -45,7 +69,7 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
     public static final int COL_AWAY_ID = 11;
 
     @Override
-    public RemoteViewsFactory onGetViewFactory(Intent intent) {
+    public RemoteViewsFactory onGetViewFactory(final Intent intent) {
 
         return new RemoteViewsFactory() {
             private Cursor data = null;
@@ -100,7 +124,7 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
 
                 final RemoteViews views = new RemoteViews(getPackageName(), R.layout.widget_list_item);
 
-                final Context context = getApplicationContext();
+                Context context = getApplicationContext();
 
                 String date = data.getString(COL_DATE);
                 String league = Utilities.getLeague(data.getInt(COL_LEAGUE));
@@ -126,14 +150,12 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
                     if (homeUrl.contains("svg")) {
                         homeUrl = Utilities.fixUrlIfSvg(homeUrl);
                     }
-                    Bitmap bitmap = null;
                     try {
-                        bitmap = Picasso.with(context).load(homeUrl).get();
+                        Bitmap bitmap = Picasso.with(context).load(homeUrl).get();
+                        views.setImageViewBitmap(R.id.home_crest, bitmap);
                     } catch (IOException e) {
                         Log.e(LOG_TAG, "e:" + e);
                     }
-
-                    views.setImageViewBitmap(R.id.home_crest, bitmap);
                 } else {
                     views.setImageViewResource(R.id.home_crest, R.drawable.no_icon);
                 }
@@ -143,14 +165,12 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
                     if (awayUrl.contains("svg")) {
                         awayUrl = Utilities.fixUrlIfSvg(awayUrl);
                     }
-
-                    Bitmap bitmap = null;
                     try {
-                        bitmap = Picasso.with(context).load(awayUrl).get();
+                        Bitmap bitmap = Picasso.with(context).load(awayUrl).get();
+                        views.setImageViewBitmap(R.id.away_crest, bitmap);
                     } catch (IOException e) {
                         Log.e(LOG_TAG, "e:" + e);
                     }
-                    views.setImageViewBitmap(R.id.away_crest, bitmap);
                 } else {
                     views.setImageViewResource(R.id.away_crest, R.drawable.no_icon);
                 }

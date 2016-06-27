@@ -1,3 +1,27 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2016. Dmytro Karataiev
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package barqsoft.footballscores.service;
 
 import android.app.NotificationManager;
@@ -44,13 +68,13 @@ public class FetchScores extends JobService {
 
     private static final int NOTIFICATION_ID = 3004;
 
-    final String[] LEAGUES = {"394", "395", "396", "397", "398", "399", "400", "401", "402", "403", "404", "405"};
+    final String[] LEAGUES = {"394", "395", "396", "397", "398", "399", "400", "401", "402", "403", "404", "405", "424"};
 
     @Override
     public boolean onStartJob(JobParameters params) {
 
-        getData("n2");
-        getData("p2");
+        getData("n7");
+        getData("p7");
 
         // Adding crest urls only once
         for (String league : LEAGUES) {
@@ -97,6 +121,7 @@ public class FetchScores extends JobService {
     }
 
     private void processJSONdata(String JSONdata, Context mContext, boolean isReal) {
+        Log.d("FetchScores", JSONdata);
         //JSON data
         // This set of league codes is for the 2015/2016 season. In fall of 2016, they will need to
         // be updated. Feel free to use the codes
@@ -149,7 +174,7 @@ public class FetchScores extends JobService {
 
         try {
             JSONArray matches = new JSONObject(JSONdata).getJSONArray(FIXTURES);
-
+            Log.d("FetchScores", "matches.length():" + matches.length());
 
             //ContentValues to be inserted
             Vector<ContentValues> values = new Vector<>(matches.length());
@@ -229,7 +254,7 @@ public class FetchScores extends JobService {
             values.toArray(insert_data);
             inserted_data = mContext.getContentResolver().bulkInsert(
                     DatabaseContract.BASE_CONTENT_URI, insert_data);
-
+            Log.d("FetchScores", "inserted_data:" + inserted_data);
             // Update widgets data
             updateWidgets();
 
@@ -326,7 +351,7 @@ public class FetchScores extends JobService {
 
                 Response response = client.newCall(request).execute();
                 JSON_data = response.body().string();
-
+                Log.d("MyFetchService", JSON_data);
                 response.body().close();
             } catch (Exception e) {
                 Log.e(LOG_TAG, "Exception here" + e.getMessage());

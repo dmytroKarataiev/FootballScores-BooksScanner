@@ -1,29 +1,41 @@
 # Football scores App
 * An app that tracks current and future football matches (soccer, for students in the USA).
+* Uses Football API: http://api.football-data.org/documentation
+
+
 
 ## Functionality and technologies
-* Data Storage: ContentProvider, SQLite Database
-* Libraries: OkHttp, Picasso
-* Collection Widget, Notifications, JobScheduler
-* Accessibility and other: RTL, content description, Ukrainian translation
+* Data Storage: ContentProvider, SQLite Database.
+* Libraries: OkHttp, Picasso.
+* Collection Widget, Notifications, JobScheduler.
+* Accessibility and other: RTL, content description, Ukrainian translation.
 
-## User Feedback for Football Scores:
+## Future Development
+* Design Improvements.
+* Sharing functionality, better widget.
+* Notifications on games you are interested in (or matches).
 
-Your Boss says:
+License
+-------
 
-"It's important to always use an API key when you can. Get your own API key and put it into the strings.xml file."
+	The MIT License (MIT)
 
-Stefan says:
+	Copyright (c) 2016 Dmytro Karataiev
 
-“This app took me a while to figure out, but it is totally worth it! It helps me keep track of when to be glued to my TV, and keeps me up to date when I’m not.”
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
 
-Moizeé says:
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
 
-“I have trouble navigating and understanding this app. It is not accessible to those of us without perfect vision."
-
-Jennie says:
-
-“I like the functionality of this app, but I hate having to open it up every time I want to check for a new game. Can’t you put something on the home screen for us?”
-
-## Evaluation Rubric
-https://docs.google.com/document/d/1jKnb7xLcdBZl1cmVYRVkX_fkpUzmUmKtrazhpfJx-zk/pub?embedded=true
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
