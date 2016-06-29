@@ -1,22 +1,35 @@
-# Nanodegree Project #3 Alexandria
+# Book Organizer with scanning functionality (Google Vision API)
 * A book list and barcode scanner app.
+![Screenshots](screenshots.jpg)
 
 ## Functionality and technologies
-* Built-in barcode scanning functionality (Google Vision API)
-* ContentProvider, SQLite Database
-* IntentService
-* Libraries: Picasso, Google Play Services (vision support)
-* Transltaion to Ukrainian
+* Built-in barcode scanning functionality (Google Vision API).
+* ContentProvider, SQLite Database.
+* IntentService.
+* Libraries: Picasso, Google Play Services (vision support).
+* Translation to Ukrainian.
 
-## User Feedback for Alexandria:
+License
+-------
 
-Lauren says:
+	The MIT License (MIT)
 
-“I like this app generally, and the speed at which books come up on my phone after I enter the ISBN is awesome. I’m frustrated that the scanning functionality isn’t implemented yet. That would speed up the whole process and make the app way more useful for me.”
+	Copyright (c) 2016 Dmytro Karataiev
 
-Josh says:
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
 
-“This app is terrible. They say you can scan books, but that functionality isn’t in the app yet. It also crashed on me when I tried to add the book my sister was reading on the flight to London.”
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
 
-## Evaluation rubric
-https://docs.google.com/document/d/1jKnb7xLcdBZl1cmVYRVkX_fkpUzmUmKtrazhpfJx-zk/pub?embedded=true
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
